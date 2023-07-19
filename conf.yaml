@@ -4,15 +4,22 @@ path:
 conduct:
   - #处理组1 
     repeat: 3
+    filter: [512,1536]
     processor:
     - #处理器1
       method: randomCrop
       arg: 512
-    - #处理器2
-      method: flip
   - #处理组2
-    repeat: 1
+    repeat: 3
+    filter: [1536,2048]
+    processor:
+    - #处理器1
+      method: resize
+      arg: 0.75
+    - #处理器2
+      method: randomCrop
+      arg: 512
+  - #处理组3 
     processor:
     - #处理器1
       method: flip
-        
