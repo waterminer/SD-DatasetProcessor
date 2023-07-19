@@ -17,7 +17,7 @@ class Data:
     # 载入标签
     def inputToken(self,file_name:str):
         file = open(os.path.join(self.path,file_name),"r")
-        self.token = file.read(-1)
+        self.token = file.read(-1).split(",")
         file.close
     
     #保存的方法
