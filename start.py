@@ -1,13 +1,16 @@
-from src.utils import excute
-from src.utils import Data
+from module.object import Data
+from module.processor import Processor
+from module.processor import excute
 import os
+import yaml
 
+with open("./conf.yaml","r",encoding="utf-8") as f:
+    config=yaml.load(f.read(),yaml.FullLoader)
 # 设置
-input_dir = "" #输入目录
-output_dir = "" #输出目录
-repeat = 4 #重复次数
+input_dir = config.get('path').get('input') #输入目录
+output_dir = config.get('path').get('output')  #输出目录
 #处理方法
-img_conducts = [[{'method':"randomcrop",'args':512}],[{'method':"randomcrop",'args':512},{'method':"flip"}],[{'method':"flip"}]]
+conducts = config.get('conduct')
 
 #文件分类
 img_ext=[".png",".jpg"] #支持的图片格式
@@ -37,12 +40,16 @@ for file_name in token_list:
         if name == data.name:
             data.inputToken(file_name)
 
+#执行处理
 new_list=data_list.copy()
 i = 0
 for data in data_list:
-    for img_conduct in img_conducts:
+    for conduct in conducts:
         data.id=i
-        new_list.append(excute(data,img_conduct))
+        if bool(conduct.get('repeat')):
+            data.repeat=conduct.get('repeat')
+        for j in range(0,data.repeat):
+            excute(data,conduct.get('processor'))
     i += 1
 
 for data in new_list:

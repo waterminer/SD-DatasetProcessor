@@ -1,0 +1,18 @@
+path:
+  input: "" #输入路径
+  output: "" #输出路径
+conduct:
+  - #处理组1 
+    repeat: 3
+    processor:
+    - #处理器1
+      method: randomCrop
+      arg: 512
+    - #处理器2
+      method: flip
+  - #处理组2
+    repeat: 1
+    processor:
+    - #处理器1
+      method: flip
+        
