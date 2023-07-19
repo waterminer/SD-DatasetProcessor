@@ -3,7 +3,7 @@ import os
 
 class Data:
     conduct = ""
-    repeat = 1
+    repeat = 0
     id = 0
     # 图片读取并初始化
     def __init__(self,path:str,name:str,ext:str):
@@ -29,3 +29,15 @@ class Data:
         file.write(self.token)
         file.close
         self.img.close
+
+class Controler:
+    def filter(data:Data,min,max):
+        if min != -1:
+            if data.size[0] <= min or data.size[1] <= min:
+                return True
+        if max != -1:
+            if data.size[0] > max or data.size[1] > max:
+                return True
+        else:
+            return False
+

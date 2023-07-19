@@ -30,6 +30,18 @@ class Processor(Data):
         data.conduct+="_f"
         return data
 
+    def resize_by_proportion(data:Data,proportion:float):
+        data.size=(int(data.size[0]*proportion),int(data.size[1]*proportion))
+        data.img = data.img.resize(data.size)
+        data.conduct+="_rp"
+        return data
+
+    def resize(data:Data,size:list):
+        data.size=(size[0],size[1])
+        data.img=data.img.resize(data.size)
+        data.conduct+="_rs"
+        return data
+
 #一个自定义的异常
 class processorError(RuntimeError):
     pass

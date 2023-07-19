@@ -1,6 +1,7 @@
 from module.object import Data
-from module.processor import Processor
+from module.object import Controler
 from module.processor import excute
+from module.processor import processorError
 import os
 import yaml
 
@@ -47,14 +48,18 @@ for i in range(0,len(data_list)):
     data = data_list.pop()
     for conduct in conducts:
         data.id=i
+        if bool(conduct.get('filter')):
+            if Controler.filter(data,conduct.get('filter')[0],conduct.get('filter')[1]):
+                continue
         if bool(conduct.get('repeat')):
             repeat=conduct.get('repeat')
+        else: repeat = 1
         for j in range(0,repeat):
             try:
                 data.repeat = j
                 new = excute(data,conduct.get('processor'))
                 new.save(output_dir)
-            except:
+            except(processorError):
                 break
 # for data in data_list:
 #     for conduct in conducts:
