@@ -12,7 +12,7 @@ class Processor(Data):
         #代码块
         return data
     '''
-    def randomCrop(data,size):
+    def random_crop(data,size):
         if not(data.size[0] <= size or data.size[1] <= size):
             x = random(1,data.size[0]-size)
             y = random(1,data.size[1]-size)
@@ -42,6 +42,32 @@ class Processor(Data):
         data.conduct+="_fr"
         return data
 
+    def none(data:Data):
+        """
+        无操作，主要用于一些特殊场景
+        """
+        return data
+    
+    def append_tag(data:Data,tag:str):
+        Data.token.append(tag)
+        return data
+    
+    def remove_tag(data:Data,tag:str):
+        Data.token.remove(tag)
+        return data
+    
+    def insert_tag(data:Data,tag:str):
+        Data.token.insert(0,tag)
+        return data
+    
+    def move_forward(data:Data):
+        """
+        将Tag里最后一位放到开头
+        """
+        token=Data.token.pop()
+        Data.token.insert(0,token)
+        return data
+    
 #一个自定义的异常
 class processorError(RuntimeError):
     pass
@@ -53,9 +79,9 @@ def excute(data:Data,conducts:dict):
         processor = getattr(Processor,conduct.get('method'))
         try:
             if bool(conduct.get("arg")):
-                processor(newData,conduct.get("arg"))
+                newData = processor(newData,conduct.get("arg"))
             else:
-                processor(newData)
+                newData = processor(newData)
         except(processorError):
             raise processorError
     return newData

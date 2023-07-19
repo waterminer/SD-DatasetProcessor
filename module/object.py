@@ -2,6 +2,7 @@ from PIL import Image
 import os
 
 class Data:
+    token:list[str] = []
     conduct = ""
     repeat = 0
     id = 0
