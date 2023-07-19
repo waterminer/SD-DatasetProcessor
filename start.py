@@ -48,9 +48,11 @@ for i in range(0,len(data_list)):
     data = data_list.pop()
     for conduct in conducts:
         data.id=i
-        if bool(conduct.get('filter')):
-            if Controler.filter(data,conduct.get('filter')[0],conduct.get('filter')[1]):
+        if bool(conduct.get('img_filter')):
+            if Controler.img_filter(data,conduct.get('filter')[0],conduct.get('filter')[1]):
                 continue
+        if bool(conduct.get('tag_filter')):
+            pass
         if bool(conduct.get('repeat')):
             repeat=conduct.get('repeat')
         else: repeat = 1

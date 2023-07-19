@@ -32,7 +32,7 @@ class Data:
         self.img.close
 
 class Controler:
-    def filter(data:Data,min,max):
+    def img_filter(data:Data,min,max):
         if min != -1:
             if data.size[0] <= min or data.size[1] <= min:
                 return True
@@ -41,4 +41,7 @@ class Controler:
                 return True
         else:
             return False
-
+    def tag_filter(data:Data,tag):
+        if tag in data.token:
+            return True
+        else: return False

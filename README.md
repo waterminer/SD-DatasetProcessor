@@ -14,7 +14,7 @@ conduct:
     filter: [512,1536]
     processor:
     - #处理器1
-      method: randomCrop
+      method: random_crop
       arg: 512
   - #处理组2
     repeat: 3
@@ -24,7 +24,7 @@ conduct:
       method: resize
       arg: 0.75
     - #处理器2
-      method: randomCrop
+      method: random_crop
       arg: 512
   - #处理组3 
     processor:
@@ -36,7 +36,7 @@ conduct:
 
 |名称|说明|参数1|
 | -- | -- | -- |
-|randomCrop|随机裁切矩形图片|图片分辨率（整数）|
+|random_crop|随机裁切矩形图片|图片分辨率（整数）|
 |flip|水平翻转图片| - |
 |resize|按比例重新调整大小|比例（附点数）|
 |force_resize|将图片缩放至特定大小|数组，输入格式为[x,y]|
