@@ -30,16 +30,16 @@ class Processor(Data):
         data.conduct+="_f"
         return data
 
-    def resize_by_proportion(data:Data,proportion:float):
+    def resize(data:Data,proportion:float):
         data.size=(int(data.size[0]*proportion),int(data.size[1]*proportion))
         data.img = data.img.resize(data.size)
-        data.conduct+="_rp"
+        data.conduct+="_r"
         return data
 
-    def resize(data:Data,size:list):
+    def force_resize(data:Data,size:list):
         data.size=(size[0],size[1])
         data.img=data.img.resize(data.size)
-        data.conduct+="_rs"
+        data.conduct+="_fr"
         return data
 
 #一个自定义的异常
