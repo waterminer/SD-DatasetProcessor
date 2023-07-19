@@ -22,7 +22,7 @@ class Data:
     
     #保存的方法
     def save(self,output_dir):
-        savename=self.name+"_"+str(self.id)+self.conduct
+        savename=self.name+"_"+str(self.id)+self.conduct+str(self.repeat)
         self.img.save(os.path.join(output_dir,savename+self.ext))
         file = open(os.path.join(output_dir,savename+".txt"),mode="x")
         print(savename)

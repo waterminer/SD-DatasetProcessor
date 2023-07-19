@@ -36,14 +36,14 @@ class processorError(RuntimeError):
 
 # 执行处理的方法
 def excute(data:Data,conducts:dict):
-    newData=copy.copy(data)
+    newData=copy.deepcopy(data)
     for conduct in conducts:
         processor = getattr(Processor,conduct.get('method'))
         try:
             if bool(conduct.get("arg")):
-                processor(data,conduct.get("arg"))
+                processor(newData,conduct.get("arg"))
             else:
-                processor(data)
+                processor(newData)
         except(processorError):
-            break
+            raise processorError
     return newData
