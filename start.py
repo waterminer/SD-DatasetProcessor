@@ -3,7 +3,6 @@ from module.processor import Processor
 from module.processor import excute
 import os
 import yaml
-import copy
 
 with open("./conf.yaml","r",encoding="utf-8") as f:
     config=yaml.load(f.read(),yaml.FullLoader)
@@ -40,17 +39,30 @@ for file_name in token_list:
     for data in data_list:
         if name == data.name:
             data.inputToken(file_name)
+token_list.clear()
 
 #执行处理
 i = 0
-for data in data_list:
+for i in range(0,len(data_list)):
+    data = data_list.pop()
     for conduct in conducts:
         data.id=i
         if bool(conduct.get('repeat')):
-            data.repeat=conduct.get('repeat')
-        for j in range(0,data.repeat):
+            repeat=conduct.get('repeat')
+        for j in range(0,repeat):
             try:
-                excute(data,conduct.get('processor')).save(output_dir)
+                data.repeat = j
+                new = excute(data,conduct.get('processor'))
+                new.save(output_dir)
             except:
                 break
-    i += 1
+# for data in data_list:
+#     for conduct in conducts:
+#         data.id=i
+#         if bool(conduct.get('repeat')):
+#             data.repeat=conduct.get('repeat')
+#         for j in range(0,data.repeat):
+#             try:
+#                 excute(data,conduct.get('processor')).save(output_dir)
+#             except:
+#                 break

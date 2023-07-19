@@ -24,8 +24,8 @@ class Data:
     def save(self,output_dir):
         savename=self.name+"_"+str(self.id)+self.conduct+str(self.repeat)
         self.img.save(os.path.join(output_dir,savename+self.ext))
-        file = open(os.path.join(output_dir,savename+".txt"),mode="x")
         print(savename)
+        file = open(os.path.join(output_dir,savename+".txt"),mode="x")
         file.write(self.token)
         file.close
         self.img.close
