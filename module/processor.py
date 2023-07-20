@@ -53,14 +53,15 @@ class Processor(Data):
         return data
     
     def remove_tag(data:Data,tag:str):
-        Data.token.remove(tag)
+        if tag in data.token:
+            Data.token.remove(tag)
         return data
     
     def insert_tag(data:Data,tag:str):
         Data.token.insert(0,tag)
         return data
     
-    def move_forward(data:Data):
+    def tag_move_forward(data:Data):
         """
         将Tag里最后一位放到开头
         """

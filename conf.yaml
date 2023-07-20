@@ -1,25 +1,31 @@
 path:
   input: "" #输入路径
   output: "" #输出路径
+path:
+  input: "" #输入路径
+  output: "" #输出路径
 conduct:
-  - #处理组1 
-    repeat: 3
-    filter: [512,1536]
-    processor:
-    - #处理器1
-      method: randomCrop
-      arg: 512
-  - #处理组2
-    repeat: 3
-    filter: [1536,2048]
-    processor:
-    - #处理器1
-      method: resize
-      arg: 0.75
-    - #处理器2
-      method: randomCrop
-      arg: 512
-  - #处理组3 
-    processor:
+  - #处理组1 此处示意为将所有大于512的图片进行翻转
+    filters: #用于定义过滤器
+    - #过滤器1
+      filter: img_filter
+      arg: [512,-1]
+    processor: #用于定义处理器
     - #处理器1
       method: flip
+      arg: 512
+
+#以下为进阶示范
+  - #处理组2 此处示意为将1024~2048区间大小的图片进行缩放然后进行随机裁切
+    repeat: 3 #用于循环执行
+    filters: #用于定义过滤器
+    - #过滤器1
+      filter: img_filter
+      arg: [1024,2048]
+    processor: #用于定义处理器
+    - #处理器1
+      method: resize
+      arg: 0.5
+    - #处理器2
+      method: random_crop
+      arg: 512
