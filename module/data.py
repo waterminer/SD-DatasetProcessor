@@ -27,6 +27,7 @@ class Data:
         self.img.save(os.path.join(output_dir,savename+self.ext))
         print(savename)
         file = open(os.path.join(output_dir,savename+".txt"),mode="x")
-        file.write(",".join(self.token))
+        text=",".join(self.token)
+        file.write(text)
         file.close
         self.img.close
