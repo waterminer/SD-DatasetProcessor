@@ -49,16 +49,16 @@ class Processor(Data):
         return data
     
     def append_tag(data:Data,tag:str):
-        Data.token.append(tag)
+        data.token.append(tag)
         return data
     
     def remove_tag(data:Data,tag:str):
         if tag in data.token:
-            Data.token.remove(tag)
+            data.token.remove(tag)
         return data
     
     def insert_tag(data:Data,tag:str):
-        Data.token.insert(0,tag)
+        data.token.insert(0,tag)
         return data
     
     def tag_move_forward(data:Data):
@@ -66,7 +66,7 @@ class Processor(Data):
         将Tag里最后一位放到开头
         """
         token=data.token.pop()
-        Data.token.insert(0,token)
+        data.token.insert(0,token)
         return data
     
 #一个自定义的异常
