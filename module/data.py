@@ -27,21 +27,6 @@ class Data:
         self.img.save(os.path.join(output_dir,savename+self.ext))
         print(savename)
         file = open(os.path.join(output_dir,savename+".txt"),mode="x")
-        file.write(self.token)
+        file.write(",".join(self.token))
         file.close
         self.img.close
-
-class Controler:
-    def img_filter(data:Data,min,max):
-        if min != -1:
-            if data.size[0] <= min or data.size[1] <= min:
-                return True
-        if max != -1:
-            if data.size[0] > max or data.size[1] > max:
-                return True
-        else:
-            return False
-    def tag_filter(data:Data,tag):
-        if tag in data.token:
-            return True
-        else: return False

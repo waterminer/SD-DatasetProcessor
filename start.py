@@ -1,5 +1,5 @@
-from module.object import Data
-from module.object import Controler
+from module.data import Data
+from module.filter import Filter
 from module.processor import excute
 from module.processor import processorError
 import os
@@ -48,11 +48,14 @@ for i in range(0,len(data_list)):
     data = data_list.pop()
     for conduct in conducts:
         data.id=i
-        if bool(conduct.get('img_filter')):
-            if Controler.img_filter(data,conduct.get('filter')[0],conduct.get('filter')[1]):
-                continue
-        if bool(conduct.get('tag_filter')):
-            pass
+        filters = conduct.get('filters')
+        flag=False
+        for filter in filters:
+            fun = getattr(Filter,filter.get('filter'))
+            if fun(data,filter.get('arg')):
+                flag=True
+        if flag:
+            continue
         if bool(conduct.get('repeat')):
             repeat=conduct.get('repeat')
         else: repeat = 1
@@ -63,13 +66,9 @@ for i in range(0,len(data_list)):
                 new.save(output_dir)
             except(processorError):
                 break
-# for data in data_list:
-#     for conduct in conducts:
-#         data.id=i
-#         if bool(conduct.get('repeat')):
-#             data.repeat=conduct.get('repeat')
-#         for j in range(0,data.repeat):
-#             try:
-#                 excute(data,conduct.get('processor')).save(output_dir)
-#             except:
-#                 break
+
+        # if bool(conduct.get('img_filter')):
+        #     if Filter.img_filter(data,conduct.get('img_filter')[0],conduct.get('img_filter')[1]):
+        #         continue
+        # if bool(conduct.get('tag_filter')):
+        #     pass

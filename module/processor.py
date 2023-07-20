@@ -1,5 +1,5 @@
 from random import randint as random
-from .object import Data
+from .data import Data
 from PIL import Image 
 from PIL import ImageEnhance
 import copy
@@ -64,7 +64,7 @@ class Processor(Data):
         """
         将Tag里最后一位放到开头
         """
-        token=Data.token.pop()
+        token=data.token.pop()
         Data.token.insert(0,token)
         return data
     
