@@ -4,6 +4,10 @@
 
 需要安装PIL库
 
+```txt
+pip install pil
+```
+
 ## 使用方式
 
 参考conf文件进行编写
