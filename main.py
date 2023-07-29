@@ -26,9 +26,7 @@ def main(input_dir,output_dir,conducts):
             data.id=i
             filters = conduct.get('filters')
             if filters:
-                flag=filter_manager(filters,data)
-                if flag:
-                    continue
+                if filter_manager(filters,data):continue
             if bool(conduct.get('repeat')):
                 repeat=conduct.get('repeat')
             else: repeat = 1
@@ -36,7 +34,7 @@ def main(input_dir,output_dir,conducts):
                 data.repeat = j
                 try:
                     processor_manager(conduct.get('processor'),data).save(output_dir)
-                except(ProcessorError):
+                except ProcessorError:
                     break
 
 if __name__ == "__main__":

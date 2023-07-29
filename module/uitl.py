@@ -35,17 +35,17 @@ def data_list_builder(input_dir)->list[Data]:
         token_list.clear()
     return data_list
 
-def filter_manager(filters:Filter,data:Data)->bool:
-    for filter in filters:
+def filter_manager(filter_list:list,data:Data)->bool:
+    for filter in filter_list:
         fun = getattr(Filter,filter.get('filter'))
     if fun(data,filter.get('arg')):
         return True
     else:
         return False
 
-def processor_manager(processors:dict,data:Data):
+def processor_manager(processor_list:list,data:Data):
     newData=copy.deepcopy(data)
-    for processor in processors:
+    for processor in processor_list:
         fun = getattr(Processor,processor.get('method'))
         try:
             if bool(processor.get("arg")):

@@ -71,7 +71,6 @@ class Processor:
 class ProcessorError(RuntimeError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
-    pass
 
 class ImageTooSmallError(ProcessorError):
     def __init__(self,name:str):
