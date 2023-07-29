@@ -2,9 +2,8 @@ from random import randint as random
 from .data import Data
 from PIL import Image 
 from PIL import ImageEnhance
-import copy
 
-class Processor(Data):
+class Processor:
     #在这里定义处理方法
     '''
     编写规范如下:
@@ -21,8 +20,7 @@ class Processor(Data):
             data.conduct+="_rc"
             data.size = data.img.size
         else:
-            print(data.name+data.ext+"图片过小，已跳过")
-            raise processorError
+            raise ImageTooSmallError(data.name+data.ext)
         return data
     
     def flip(data):
@@ -69,20 +67,12 @@ class Processor(Data):
         data.token.insert(0,token)
         return data
     
-#一个自定义的异常
-class processorError(RuntimeError):
+#自定义异常
+class ProcessorError(RuntimeError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
     pass
 
-# 执行处理的方法
-def excute(data:Data,conducts:dict):
-    newData=copy.deepcopy(data)
-    for conduct in conducts:
-        processor = getattr(Processor,conduct.get('method'))
-        try:
-            if bool(conduct.get("arg")):
-                newData = processor(newData,conduct.get("arg"))
-            else:
-                newData = processor(newData)
-        except(processorError):
-            raise processorError
-    return newData
+class ImageTooSmallError(ProcessorError):
+    def __init__(self,name:str):
+        print("image "+name+" is too small!")
