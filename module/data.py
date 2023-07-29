@@ -17,17 +17,15 @@ class Data:
 
     # 载入标签
     def inputToken(self,file_name:str):
-        file = open(os.path.join(self.path,file_name),"r")
-        self.token = file.read(-1).split(",")
-        file.close
+        with open(os.path.join(self.path,file_name),"r") as f:
+            self.token = f.read(-1).split(",")
     
     #保存的方法
     def save(self,output_dir):
         savename=self.name+"_"+str(self.id)+self.conduct+str(self.repeat)
         self.img.save(os.path.join(output_dir,savename+self.ext))
         print(savename)
-        file = open(os.path.join(output_dir,savename+".txt"),mode="x")
-        text=",".join(self.token)
-        file.write(text)
-        file.close
+        with open(os.path.join(output_dir,savename+".txt"),mode="w") as f:
+            text=",".join(self.token)
+            f.write(text)
         self.img.close
