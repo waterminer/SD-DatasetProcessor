@@ -39,29 +39,4 @@ def main(input_dir,output_dir,conducts):
 
 if __name__ == "__main__":
     main(input_dir,output_dir,conducts)
-
-# if not(os.path.exists(output_dir)):
-#     os.mkdir(output_dir)
-# i = 0
-# for i in range(0,len(data_list)):
-#     data = data_list.pop()
-#     for conduct in conducts:
-#         data.id=i
-#         filters = conduct.get('filters')
-#         flag=False
-#         for filter in filters:
-#             fun = getattr(Filter,filter.get('filter'))
-#             if fun(data,filter.get('arg')):
-#                 flag=True
-#         if flag:
-#             continue
-#         if bool(conduct.get('repeat')):
-#             repeat=conduct.get('repeat')
-#         else: repeat = 1
-#         for j in range(0,repeat):
-#             try:
-#                 data.repeat = j
-#                 new = excute(data,conduct.get('processor'))
-#                 new.save(output_dir)
-#             except(processorError):
-#                 break
+    
