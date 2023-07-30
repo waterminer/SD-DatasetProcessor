@@ -12,15 +12,20 @@ class Filter:
         if max != -1:
             if data.size[0] > max or data.size[1] > max:
                 return True
-        else:
-            return False
+        else: return False
         
     def tag_filter(data:Data,tag):
-        if tag in data.token:
-            return True
+        if tag in data.token: return True
         else: return False
 
     def tag_selecter(data:Data,tag):
-        if tag in data.token:
-            return False
+        if tag in data.token: return False
         else: return True
+
+    def tag_is_not_none(data:Data):
+        if data.token: return False
+        else: return True
+
+    def tag_is_none(data:Data):
+        if data.token: return True
+        else: return False
