@@ -6,7 +6,7 @@ path:
   output: "" #输出路径
 
 tagger:
-  active: False #启用自动打标
+  active: True #启用自动打标
   batch_size: 4 #批次大小
   max_data_loader_n_workers: 1 #越大越占内存
   
