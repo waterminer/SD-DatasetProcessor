@@ -4,6 +4,12 @@ path:
 path:
   input: "" #输入路径
   output: "" #输出路径
+
+tagger:
+  active: False #启用自动打标
+  batch_size: 4 #批次大小
+  max_data_loader_n_workers: 1 #越大越占内存
+  
 conduct:
   - #处理组1 此处示意为将所有大于512的图片进行翻转
     filters: #用于定义过滤器

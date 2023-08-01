@@ -142,7 +142,7 @@ class Tagger:
             self.general_threshold = self.thresh
         else:
             self.general_threshold = option.general_threshold
-        self.debug = True
+        self.debug = False
 
 
     def run_batch(self,batchs):

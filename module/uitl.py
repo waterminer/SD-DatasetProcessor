@@ -1,7 +1,7 @@
 from module import Data
 from module import Filter
 from module import Processor, ProcessorError
-from .tools.tagger import Tagger
+from .tools.tagger import Tagger,TaggerOption
 import copy
 import os
 
@@ -75,3 +75,28 @@ def processor_manager(processor_list: list, data: Data):
         except ProcessorError:
             raise ProcessorError
     return new_data
+
+
+def tagger_bulider(args:dict)->Tagger:
+    option = TaggerOption()
+    if args.get('model_path'):
+        option.model_path = args['model_path']
+    if args.get('model_type'):
+        option.model_type = args['model_type']
+    if args.get('force_download'):
+        option.force_download = args['force_download']
+    if args.get('undesired_tags'):
+        option.undesired_tags = args['undesired_tags']
+    if args.get('batch_size'):
+        option.batch_size = args['batch_size']
+    if args.get('max_data_loader_n_workers'):
+        option.max_data_loader_n_workers = args['max_data_loader_n_workers']
+    if args.get('remove_underscore'):
+        option.remove_underscore = args['remove_underscore']
+    if args.get('thresh'):
+        option.thresh = args['thresh']
+    if args.get('character_threshold'):
+        option.character_threshold = args['character_threshold']
+    if args.get('general_threshold'):
+        option.general_threshold = args['general_threshold']
+    return Tagger(option)

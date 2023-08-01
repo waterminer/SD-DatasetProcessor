@@ -24,9 +24,9 @@ class Data:
 
     # 保存的方法
     def save(self, output_dir):
-        save_name = self.name + "_" + str(self.id) + self.conduct + str(self.repeat)
+        save_name = self.name + "_" + str(self.id) +"_"+ self.conduct +"_"+ str(self.repeat)
         self.img.save(os.path.join(output_dir, save_name + self.ext))
-        print(save_name)
+        # print(save_name)
         with open(os.path.join(output_dir, save_name + ".txt"), mode="w") as f:
             text = ",".join(self.token)
             f.write(text)

@@ -2,7 +2,8 @@ from module import ProcessorError
 from module.uitl import (
     data_list_builder,
     filter_manager,
-    processor_manager
+    processor_manager,
+    tagger_bulider
 )
 
 from module.tools.tagger import Tagger,TaggerOption,ModelType
@@ -10,20 +11,17 @@ from module.tools.tagger import Tagger,TaggerOption,ModelType
 import os
 import yaml
 
-with open("./test.yaml", "r", encoding="utf-8") as f:
+with open("./conf.yaml", "r", encoding="utf-8") as f:
     config = yaml.load(f.read(), yaml.FullLoader)
 # 设置
 input_dir = config.get('path').get('input')  # 输入目录
 output_dir = config.get('path').get('output')  # 输出目录
-# 处理集
+
 conducts = config.get('conduct')
+tagger = config.get('tagger')
 
-
-def main(input_dir, output_dir, conducts):
-    tagger=False
-    if config.get('tagger'):
-        tagger = config.get('tagger')
-    data_list = data_list_builder(input_dir)
+def main(input_dir, output_dir, conducts, tagger:Tagger|None=None):
+    data_list = data_list_builder(input_dir,tagger)
     if not (os.path.exists(output_dir)):
         os.mkdir(output_dir)
     i = 0
@@ -47,12 +45,8 @@ def main(input_dir, output_dir, conducts):
 
 
 if __name__ == "__main__":
-    # main(input_dir,output_dir,conducts)
-    Option = TaggerOption()
-    Option.model_type=ModelType.WD14_MOAT
-    Option.batch_size=4
-    Option.max_data_loader_n_workers=1
-    tagger = Tagger(Option)
-    datalist = data_list_builder("F:\\Download\\Grabber\\木下沙沙美\\pickup",tagger)
-    tokens = [data.token for data in datalist]
-    print (tokens)
+    if tagger:
+        if tagger['active']:
+           tagger=tagger_bulider(tagger)
+        else: tagger=None
+    main(input_dir,output_dir,conducts,tagger)
