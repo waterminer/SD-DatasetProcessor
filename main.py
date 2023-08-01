@@ -1,11 +1,11 @@
 from module import ProcessorError
-from module import (
+from module.uitl import (
     data_list_builder,
     filter_manager,
     processor_manager
 )
 
-from module.tools.tagger import tagger
+from module.tools.tagger import Tagger,TaggerOption,ModelType
 
 import os
 import yaml
@@ -20,6 +20,9 @@ conducts = config.get('conduct')
 
 
 def main(input_dir, output_dir, conducts):
+    tagger=False
+    if config.get('tagger'):
+        tagger = config.get('tagger')
     data_list = data_list_builder(input_dir)
     if not (os.path.exists(output_dir)):
         os.mkdir(output_dir)
@@ -45,4 +48,11 @@ def main(input_dir, output_dir, conducts):
 
 if __name__ == "__main__":
     # main(input_dir,output_dir,conducts)
-    tagger(data_list_builder("../daizu"))
+    Option = TaggerOption()
+    Option.model_type=ModelType.WD14_MOAT
+    Option.batch_size=4
+    Option.max_data_loader_n_workers=1
+    tagger = Tagger(Option)
+    datalist = data_list_builder("F:\\Download\\Grabber\\木下沙沙美\\pickup",tagger)
+    tokens = [data.token for data in datalist]
+    print (tokens)

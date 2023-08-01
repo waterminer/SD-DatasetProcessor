@@ -1,6 +1,7 @@
-from .data import Data
-from .filter import Filter
-from .processor import Processor, ProcessorError
+from module import Data
+from module import Filter
+from module import Processor, ProcessorError
+from .tools.tagger import Tagger
 import copy
 import os
 
@@ -25,7 +26,7 @@ def pair_token(token_list: list, data_list: list):
 
 
 # 读入文件的方法
-def data_list_builder(input_dir) -> list[Data]:
+def data_list_builder(input_dir,tagger:Tagger|None=None) -> list[Data]:
     data_list: list[Data] = []
     token_list = []
     no_paired_data_list = []
@@ -47,6 +48,9 @@ def data_list_builder(input_dir) -> list[Data]:
         "一共读取" + str(count) + "张图片,其中有" +
         str(no_paired_data_list.__len__()) + "张图片没有配对的标签"
     )
+    if tagger:
+        print("已启用打标")
+        tagger.tag_data_list(no_paired_data_list)
     return data_list
 
 
