@@ -55,20 +55,37 @@ class Processor:
     def remove_tag(data: Data, tag: str):
         if tag in data.token:
             data.token.remove(tag)
+        else:
+            raise TagNotExistError(tag,data.name + data.ext)
         return data
 
     def insert_tag(data: Data, tag: str):
         data.token.insert(0, tag)
         return data
 
-    def tag_move_forward(data: Data):
+    def tag_move_forward(data: Data,tag:str):
         """
-        将Tag里最后一位放到开头
+        将匹配项放到开头
         """
-        token = data.token.pop()
-        data.token.insert(0, token)
+        if tag in data.token:
+            data.token.remove(tag)
+        else:
+            raise TagNotExistError(tag,data.name + data.ext)
+        data.token.insert(0, tag)
         return data
-
+    def rename_tag(data:Data,tags:list[str]):
+        """
+        将Atag改名为Btag
+        """
+        tag_a = tags[0]
+        tag_b = tags[1]
+        if tag_a in data.token:
+            index = data.token.index(tag_a)
+            data.token.insert(index,tag_b)
+            data.token.remove(tag_a)
+        else:
+            raise TagNotExistError(tag_a,data.name + data.ext)
+        return data
 
 # 自定义异常
 class ProcessorError(RuntimeError):
@@ -79,3 +96,7 @@ class ProcessorError(RuntimeError):
 class ImageTooSmallError(ProcessorError):
     def __init__(self, name: str):
         print("image " + name + " is too small!")
+
+class TagNotExistError(ProcessorError):
+    def __init__(self,tag,name: str):
+        print("Tag"+ tag + "not exist in"+name+"!")

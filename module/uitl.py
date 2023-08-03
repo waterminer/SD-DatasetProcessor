@@ -57,23 +57,28 @@ def data_list_builder(input_dir,tagger:Tagger|None=None) -> list[Data]:
 def filter_manager(filter_list: list, data: Data) -> bool:
     for filter in filter_list:
         fun = getattr(Filter, filter.get('filter'))
-        if fun(data, filter.get('arg')):
-            return True
+        if filter.get('arg'):
+            if fun(data, filter.get('arg')): return True
+            else:return False
         else:
-            return False
+            if fun(data): return True
+            else:return False
 
 
 def processor_manager(processor_list: list, data: Data):
     new_data = copy.deepcopy(data)
     for processor in processor_list:
-        fun = getattr(Processor, processor.get('method'))
         try:
+            fun = getattr(Processor, processor.get('method'))
             if bool(processor.get("arg")):
                 new_data = fun(new_data, processor.get("arg"))
             else:
                 new_data = fun(new_data)
         except ProcessorError:
             raise ProcessorError
+        except AttributeError:
+            print("输入错误：不存在的method："+processor.get('method')+"\n请检查配置文件")
+            exit(1)
     return new_data
 
 

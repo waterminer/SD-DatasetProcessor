@@ -3,7 +3,7 @@ class Filter:
     """
     此处用于编写过滤器
     """
-    def img_filter(data:Data,size:list):
+    def img_size(data:Data,size:list):
         max = size[1]
         min = size[0]
         if min != -1:
