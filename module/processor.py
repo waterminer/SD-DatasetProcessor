@@ -2,7 +2,7 @@ from random import randint as random
 from .data import Data
 from PIL import Image
 from PIL import ImageEnhance
-
+import numpy as np
 
 class Processor:
     # 在这里定义处理方法
@@ -41,6 +41,58 @@ class Processor:
         data.img = data.img.resize(data.size)
         data.conduct += "_fr"
         return data
+    
+    def offset(data: Data,offset:int):
+        data.img = data.img.offset(offset,0)
+        data.conduct += "_off"
+        return data
+    
+    def rotation(data: Data, rot:int):
+        data.img = data.img.rotate(rot)
+        data.conduct += "_rot"
+        return data
+    
+    def contrast_enhancement(data: Data): #对比度增强
+        image = data.img
+        enh_con = ImageEnhance.Contrast(image)
+        contrast = 1.5
+        data.img = enh_con.enhance(contrast)
+        data.conduct += "_con_e"
+        return data
+    
+    def brightness_enhancement(data: Data):#亮度增强
+        image = data.img
+        enh_bri = ImageEnhance.Brightness(image)
+        brightness = 1.5
+        data.img = enh_bri.enhance(brightness)
+        data.conduct += "_bri_e"
+        return data
+
+    def color_enhancement(data: Data):#颜色增强
+        image = data.img
+        enh_col = ImageEnhance.Color(image)
+        color = 1.5
+        data.img = enh_col.enhance(color)
+        data.conduct += "_col_e"
+        return data
+    
+    def random_enhancement(data: Data): #随机抖动
+        """
+        对图像进行颜色抖动
+        :param image: PIL的图像image
+        :return: 有颜色色差的图像image
+        """
+        image = data.img
+        random_factor = np.random.randint(8, 31) / 10.  # 随机因子
+        color_image = ImageEnhance.Color(image).enhance(random_factor)  # 调整图像的饱和度
+        random_factor = np.random.randint(8, 10) / 10.  # 随机因子
+        brightness_image = ImageEnhance.Brightness(color_image).enhance(random_factor)  # 调整图像的亮度
+        random_factor = np.random.randint(8, 10) / 10.  # 随机因子
+        contrast_image = ImageEnhance.Contrast(brightness_image).enhance(random_factor)  # 调整图像对比度
+        random_factor = np.random.randint(8, 20) / 10.  # 随机因子
+        data.img = ImageEnhance.Sharpness(contrast_image).enhance(random_factor)  # 调整图像锐度
+        data.conduct += "_ran_e"
+        return data
 
     def none(data: Data):
         """
@@ -73,6 +125,7 @@ class Processor:
             raise TagNotExistError(tag,data.name + data.ext)
         data.token.insert(0, tag)
         return data
+    
     def rename_tag(data:Data,tags:list[str]):
         """
         将Atag改名为Btag
