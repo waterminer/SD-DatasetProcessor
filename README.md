@@ -6,6 +6,7 @@
 
 ```bash
 pip install pil
+pip install numpy
 ```
 
 ## 使用方式
@@ -52,8 +53,14 @@ conduct:
 | -- | -- | -- |
 |random_crop|随机裁切矩形图片|图片分辨率（整数）|
 |flip|水平翻转图片| - |
-|resize|按比例重新调整大小|比例（附点数）|
+|resize|按比例重新调整大小|比例（浮点数）|
 |force_resize|将图片缩放至特定大小|数组，输入格式为[x,y]|
+|offset|将图片偏移n个像素|偏移量（整数）|
+|rotation|将图片选择n个角度|角度(整数)|
+|contrast_enhancement|对比度增强|-|
+|brightness_enhancement|亮度增强|-|
+|color_enhancement|饱和度增强|-|
+|random_enhancement|随机增强|-|
 |none|不做操作（用于特定场合）|-|
 
 ### 标签处理
