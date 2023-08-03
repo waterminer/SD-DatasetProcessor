@@ -4,13 +4,13 @@ class Filter:
     此处用于编写过滤器
     """
     def img_size(data:Data,size:list):
-        max = size[1]
-        min = size[0]
+        min,max = tuple(size)
+        x,y = data.size
         if min != -1:
             if data.size[0] <= min or data.size[1] <= min:
                 return True
         if max != -1:
-            if data.size[0] > max or data.size[1] > max:
+            if data.size[0] > max and data.size[1] > max:
                 return True
         else: return False
         
