@@ -6,7 +6,7 @@ from module.uitl import (
     tagger_bulider
 )
 
-from module.tools.tagger import Tagger,TaggerOption,ModelType
+from module.tools.tagger import Tagger
 
 import os
 import yaml
@@ -18,9 +18,10 @@ input_dir = config.get('path').get('input')  # 输入目录
 output_dir = config.get('path').get('output')  # 输出目录
 
 conducts = config.get('conduct')
+option:config.get('option')
 tagger = config.get('tagger')
 
-def main(input_dir, output_dir, conducts, tagger:Tagger|None=None):
+def main(input_dir, output_dir, conducts,option:dict|None=None, tagger:Tagger|None=None):
     data_list = data_list_builder(input_dir,tagger)
     if not (os.path.exists(output_dir)):
         os.mkdir(output_dir)
@@ -39,7 +40,7 @@ def main(input_dir, output_dir, conducts, tagger:Tagger|None=None):
             for j in range(0, repeat):
                 data.repeat = j
                 try:
-                    processor_manager(conduct.get('processor'), data).save(output_dir)
+                    processor_manager(conduct.get('processor'), data).save(output_dir,option)
                 except ProcessorError:
                     break
 
