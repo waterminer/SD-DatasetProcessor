@@ -3,10 +3,7 @@ from module.uitl import (
     data_list_builder,
     filter_manager,
     processor_manager,
-    tagger_bulider
 )
-
-from module.tools.tagger import Tagger,TaggerOption,ModelType
 
 import os
 import yaml
@@ -18,10 +15,9 @@ input_dir = config.get('path').get('input')  # 输入目录
 output_dir = config.get('path').get('output')  # 输出目录
 
 conducts = config.get('conduct')
-tagger = config.get('tagger')
 
-def main(input_dir, output_dir, conducts, tagger:Tagger|None=None):
-    data_list = data_list_builder(input_dir,tagger)
+def main(input_dir, output_dir, conducts):
+    data_list = data_list_builder(input_dir)
     if not (os.path.exists(output_dir)):
         os.mkdir(output_dir)
     i = 0
@@ -45,8 +41,4 @@ def main(input_dir, output_dir, conducts, tagger:Tagger|None=None):
 
 
 if __name__ == "__main__":
-    if tagger:
-        if tagger['active']:
-           tagger=tagger_bulider(tagger)
-        else: tagger=None
-    main(input_dir,output_dir,conducts,tagger)
+    main(input_dir,output_dir,conducts)

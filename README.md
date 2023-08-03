@@ -4,13 +4,9 @@
 
 需要安装依赖
 
-```txt
-python -m venv ./venv
-./venv/Scripts/activate
-pip install -r ./requirements.txt
+```bash
+pip install pil
 ```
-
-注意：该版本会安装torch相关的一大堆依赖，如果不想要，可以选择激活别的地方的venv后再来运行*如果你不懂我说的是什么意思那你就照着上面指令用就行了*
 
 ## 使用方式
 
@@ -20,11 +16,6 @@ pip install -r ./requirements.txt
 path:
   input: "" #输入路径
   output: "" #输出路径
-
-tagger: #自动打标相关设置
-  active: True #启用自动打标
-  batch_size: 4 #批次大小
-  max_data_loader_n_workers: 1 #越大越占内存
 
 conduct:
   - #处理组1 此处示意为将所有大于512的图片进行翻转
@@ -86,38 +77,3 @@ conduct:
 |tag_selecter|须要包含特定标签|标签（文本）|
 |tag_is_not_none|只含有带标签的图片|-|
 |tag_is_none|只含有不带标签的图片|-|
-
-## 自动打标设置说明
-
-在Tagger后添加`active: True`可以启用自动打标
-
-如果你已经全部完成打标了，依旧打开此项会大大拖慢速度（花时间读取模型）,所以请自行选择是否打开
-
-目前只支持对未打标文件进行打标
-
-以下这下配置是可选的，如果你不清楚是什么，请保持默认
-
-|名称|说明|参数|
-|--|--|--|
-|active|启用自动打标|布尔值(True/False)|
-|model_path|模型路径，下载的模型都会放在此文件夹内|路径|
-|model_type|模型种类，具体看下一章|模型种类|
-|force_download|强制下载模型|布尔值|
-|undesired_tags|排除标签|标签，以英文半角逗号","分隔|
-|remove_underscore|以空格替代下划线"_"|布尔值|
-|batch_size|每批大小|整数|
-|max_data_loader_n_workers|数据读取大小，越大越占内存|整数|
-|thresh|置信度，会排除掉比这个值低的标签，默认是0.35|0~1浮点数|
-|character_threshold|角色置信度，如果启用，会以这个值单独设置角色标签的推断|0~1浮点数|
-|general_threshold|普通标签置信度，如果启用，会以这个值单独设置普通标签置的推断|0~1浮点数|
-
-### 自动打标模型种类
-
-默认参数为`WD14_CONVNEXT`可以按照喜好自行选择
-|值|链接|P=R: threshold|F1|
-|--|--|--|--|
-|WD14_MOAT|[链接](https://huggingface.co/SmilingWolf/wd-v1-4-moat-tagger-v2)|0.3771|0.6911|
-|WD14_VIT|[链接](https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger-v2)|0.3537|0.6770|
-|WD14_SWINV2|[链接](https://huggingface.co/SmilingWolf/wd-v1-4-swinv2-tagger-v2)|0.3771|0.6854|
-|WD14_CONVNEXT|[链接](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger-v2)|0.3685|0.6810|
-|WD14_CONVNEXT2|[链接](https://huggingface.co/SmilingWolf/wd-v1-4-convnextv2-tagger-v2)|0.3710|0.6862|
