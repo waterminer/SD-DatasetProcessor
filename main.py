@@ -1,5 +1,4 @@
-from module import ProcessorError
-from module.uitl import *
+from module import *
 
 from module.tools.tagger import Tagger
 
@@ -23,7 +22,7 @@ def main(input_dir, output_dir, conducts,option:dict|None=None, tagger:Tagger|No
 
 
 if __name__ == "__main__":
-    with open("./test.yaml", "r", encoding="utf-8") as f:
+    with open("./config.yaml", "r", encoding="utf-8") as f:
         config = yaml.load(f.read(), yaml.FullLoader)
     # 设置
     input_dir = config.get('path').get('input')  # 输入目录
