@@ -4,7 +4,6 @@ from PIL import Image
 from PIL import ImageEnhance
 import numpy as np
 
-
 class Processor:
     # 在这里定义处理方法
     """
@@ -126,7 +125,7 @@ class Processor:
             raise TagNotExistError(tag,data.name + data.ext)
         data.token.insert(0, tag)
         return data
-
+    
     def rename_tag(data:Data,tags:list[str]):
         """
         将Atag改名为Btag

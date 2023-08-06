@@ -21,10 +21,19 @@ class Data:
     def input_token(self, file_name: str):
         with open(os.path.join(self.path, file_name), "r") as f:
             self.token = f.read(-1).split(",")
-
+            
     # 保存的方法
-    def save(self, output_dir):
-        save_name = self.name + "_" + str(self.id) +"_"+ self.conduct +"_"+ str(self.repeat)
+    def save(self, output_dir,option:dict|None=None):
+        #默认命名方式：id_conduct_repeat.ext 比如"000001_r_0.jpg"
+        save_name = str(self.id).zfill(6) + self.conduct +"_"+ str(self.repeat)
+        if option.get('save_sorce_name') or option.get('save_conduct_id') or option.get('save_repeat'):
+            save_name=str(self.id).zfill(6)
+            if option.get('save_sorce_name'):
+                save_name = save_name.join('_'+self.name)
+            if option.get('save_conduct_id'):
+                save_name = save_name.join(self.conduct)
+            if option.get('save_repeat'):
+                save_name = save_name.join('_'+self.repeat)
         self.img.save(os.path.join(output_dir, save_name + self.ext))
         # print(save_name)
         with open(os.path.join(output_dir, save_name + ".txt"), mode="w") as f:
