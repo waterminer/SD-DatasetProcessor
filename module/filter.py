@@ -10,7 +10,7 @@ class Filter:
             if data.size[0] <= min or data.size[1] <= min:
                 return True
         if max != -1:
-            if data.size[0] > max or data.size[1] > max:
+            if data.size[0] > max and data.size[1] > max:
                 return True
         else: return False
         
