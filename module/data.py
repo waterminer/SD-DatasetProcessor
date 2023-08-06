@@ -21,10 +21,11 @@ class Data:
     def input_token(self, file_name: str):
         with open(os.path.join(self.path, file_name), "r") as f:
             self.token = f.read(-1).split(",")
+            pass
 
     # 保存的方法
     def save(self, output_dir,option:dict|None=None):
-        save_name=str(self.id)
+        save_name=str(self.id).zfill(6)
         if option:
             if option.get('save_sorce_name'):
                 save_name = save_name.join('_'+self.name)
@@ -33,7 +34,7 @@ class Data:
             if option.get('save_repeat'):
                 save_name = save_name.join('_'+self.repeat)
         else: 
-            save_name = str(self.id) + "_"+ self.name + "_" +  self.conduct +"_"+ str(self.repeat)
+            save_name = str(self.id).zfill(6) + "_" +  self.conduct +"_"+ str(self.repeat)
         self.img.save(os.path.join(output_dir, save_name + self.ext))
         # print(save_name)
         with open(os.path.join(output_dir, save_name + ".txt"), mode="w") as f:

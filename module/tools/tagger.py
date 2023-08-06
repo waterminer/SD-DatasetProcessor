@@ -216,6 +216,9 @@ class Tagger:
                 if tensor_data is None:
                     continue
                 image, sorce_data = tensor_data
+                for data in data_list:
+                    if sorce_data.name == data.name:
+                        sorce_data = data
                 if image is not None:
                     image = image.detach().numpy()
                 else:
