@@ -5,7 +5,6 @@ from module.tools.tagger import Tagger
 import os
 import yaml
 
-
 def main(input_dir, output_dir, conducts,option:dict|None=None, tagger:Tagger|None=None):
     data_list = data_list_builder(input_dir,tagger)
     if not (os.path.exists(output_dir)):

@@ -21,8 +21,7 @@ class Data:
     def input_token(self, file_name: str):
         with open(os.path.join(self.path, file_name), "r") as f:
             self.token = f.read(-1).split(",")
-            pass
-
+            
     # 保存的方法
     def save(self, output_dir,option:dict|None=None):
         #默认命名方式：id_conduct_repeat.ext 比如"000001_r_0.jpg"
