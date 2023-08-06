@@ -82,15 +82,16 @@ def processor_manager(processor_list: list, data: Data):
 
 
 def conduct_manager(conducts:list,data:Data,output_dir:str,option:dict|None=None)->Data:
+    new_data = copy.deepcopy(data)
     for conduct in conducts:
         if conduct.get('sub_conduct'):
-            sub_data = copy.copy(data)
+            sub_data = copy.copy(new_data)
             sub_data.conduct += "_sub["
             sub_data = conduct_manager(conduct.get('sub_conduct'),sub_data,output_dir,option)
             if sub_data is not None:
                 sub_data.conduct += "]"
-                data.img = sub_data.img.copy()
-                data.conduct += sub_data.conduct
+                new_data.img = sub_data.img.copy()
+                new_data.conduct += sub_data.conduct
                 if option.get('save_sub'):
                     sub_output=os.path.join(output_dir,"sub")
                     if not (os.path.exists(sub_output)):
@@ -98,15 +99,15 @@ def conduct_manager(conducts:list,data:Data,output_dir:str,option:dict|None=None
                     sub_data.save(sub_output,option)
         filters = conduct.get('filters')
         if filters:
-            if filter_manager(filters, data): continue
+            if filter_manager(filters, new_data): continue
         if bool(conduct.get('repeat')):
             repeat = conduct.get('repeat')
         else:
             repeat = 1
         for j in range(0, repeat):
-            data.repeat = j
+            new_data.repeat = j
             try:
-                return processor_manager(conduct.get('processor'), data)
+                return processor_manager(conduct.get('processor'), new_data)
             except ProcessorError:
                 break
 
