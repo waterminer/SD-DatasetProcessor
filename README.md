@@ -26,7 +26,7 @@
 python -m venv ./venv
 ./venv/Scripts/activate
 pip install -r ./requirements.txt
-
+```
 
 注意：该版本会安装torch相关的一大堆依赖，如果不想要，可以选择激活别的地方的venv后再来运行*如果你不懂我说的是什么意思那你就照着上面指令用就行了*
 
