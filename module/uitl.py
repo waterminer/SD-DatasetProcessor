@@ -66,20 +66,49 @@ def filter_manager(filter_list: list, data: Data) -> bool:
 
 
 def processor_manager(processor_list: list, data: Data):
-    new_data = copy.deepcopy(data)
     for processor in processor_list:
         try:
             fun = getattr(Processor, processor.get('method'))
             if bool(processor.get("arg")):
-                new_data = fun(new_data, processor.get("arg"))
+                data = fun(data, processor.get("arg"))
             else:
-                new_data = fun(new_data)
+                data = fun(data)
         except ProcessorError:
             raise ProcessorError
         except AttributeError:
             print("输入错误：不存在的method："+processor.get('method')+"\n请检查配置文件")
             exit(1)
-    return new_data
+    return data
+
+
+def conduct_manager(conducts:list,data:Data,output_dir:str,option:dict|None=None)->Data:
+    for conduct in conducts:
+        if conduct.get('sub_conduct'):
+            sub_data = copy.copy(data)
+            sub_data.conduct += "_sub["
+            sub_data = conduct_manager(conduct.get('sub_conduct'),sub_data,output_dir,option)
+            if sub_data is not None:
+                sub_data.conduct += "]"
+                data.img = sub_data.img.copy()
+                data.conduct += sub_data.conduct
+                if option.get('save_sub'):
+                    sub_output=os.path.join(output_dir,"sub")
+                    if not (os.path.exists(sub_output)):
+                        os.mkdir(sub_output)
+                    sub_data.save(sub_output,option)
+        filters = conduct.get('filters')
+        if filters:
+            if filter_manager(filters, data): continue
+        if bool(conduct.get('repeat')):
+            repeat = conduct.get('repeat')
+        else:
+            repeat = 1
+        for j in range(0, repeat):
+            data.repeat = j
+            try:
+                return processor_manager(conduct.get('processor'), data)
+            except ProcessorError:
+                break
 
 
 def tagger_bulider(args:dict)->Tagger:
