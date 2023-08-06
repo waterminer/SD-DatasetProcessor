@@ -55,10 +55,9 @@ def filter_manager(filter_list: list, data: Data) -> bool:
         fun = getattr(Filter, filter.get('filter'))
         if filter.get('arg'):
             if fun(data, filter.get('arg')): return True
-            else:return False
         else:
             if fun(data): return True
-            else:return False
+    return False
 
 
 def processor_manager(processor_list: list, data: Data):
