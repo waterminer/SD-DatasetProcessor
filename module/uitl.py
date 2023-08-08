@@ -11,14 +11,14 @@ TEXT_EXT = [".txt"]  # 支持的标签格式
 
 
 # 匹配标签
-def pair_token(token_list: list, data_list: list):
+def pair_token(token_list: list, data_list: list[Data],option:dict|None=None):
     no_paired_data_list = []
     for data in data_list:
         for file_name in token_list:
             splitext = os.path.splitext(file_name)
             name = splitext[0]
             if name == data.name:
-                data.input_token(file_name)
+                data.input_token(file_name,option)
                 token_list.remove(file_name)
         if not data.token:
             no_paired_data_list.append(data)
@@ -26,7 +26,7 @@ def pair_token(token_list: list, data_list: list):
 
 
 # 读入文件的方法
-def data_list_builder(input_dir,tagger:Tagger|None=None) -> list[Data]:
+def data_list_builder(input_dir:str,option:dict|None=None,tagger:Tagger|None=None) -> list[Data]:
     data_list: list[Data] = []
     token_list = []
     no_paired_data_list = []
@@ -42,7 +42,7 @@ def data_list_builder(input_dir,tagger:Tagger|None=None) -> list[Data]:
             count += 1
         if ext in TEXT_EXT:
             token_list.append(file_name)
-        no_paired_data_list = pair_token(token_list, data_list)
+        no_paired_data_list = pair_token(token_list, data_list,option)
     token_list.clear()
     print(
         "一共读取" + str(count) + "张图片,其中有" +
