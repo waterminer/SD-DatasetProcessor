@@ -4,3 +4,4 @@ test.yaml
 tag_images_by_wd14_tagger.py
 \models
 \.idea
+\venv

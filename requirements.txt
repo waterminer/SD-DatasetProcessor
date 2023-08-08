@@ -6,3 +6,4 @@ tqdm~=4.65.0
 Pillow~=10.0.0
 PyYAML~=6.0.1
 huggingface_hub
+tensorflow

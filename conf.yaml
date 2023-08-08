@@ -1,9 +1,6 @@
 path:
   input: "" #输入路径
   output: "" #输出路径
-path:
-  input: "" #输入路径
-  output: "" #输出路径
 
 tagger:
   active: True #启用自动打标

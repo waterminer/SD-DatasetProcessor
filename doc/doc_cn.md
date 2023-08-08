@@ -64,10 +64,12 @@ conduct:
 在yaml中加入option来自定义以下选项
 
 |名称|说明|
+|--|--|
 |save_sorce_name|保存原文件名称|
 |save_conduct_id|保存处理id|
 |save_repeat|保存重复次数|
 |save_sub|保存子处理|
+|clean_tag|清理标签(将"_"换成空格，给括号加上"\")|
 
 以下是示例：
 
@@ -102,7 +104,7 @@ option:
 |append_tag|在标签组末尾加上标签|标签（文本）|
 |remove_tag|删除标签组中符合条件的标签|标签（文本）|
 |insert_tag|在标签组开头插入标签|标签（文本）|
-|move_forward|将选定标签移到开头|标签（文本）|
+|tag_move_forward|将选定标签移到开头|标签（文本）|
 |rename_tag|重命名标签，将`A标签`重命名为`B标签`|['A标签','B标签']|
 
 ## 过滤器说明
