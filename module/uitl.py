@@ -172,8 +172,12 @@ class DatasetProcessor:
             try:
                 fun = getattr(Processor, processor.get('method'))
                 if fun == Processor.tag_image:
+                    if self.tagger is None:
+                        raise NoneTaggerError()
                     data = fun(data,self.tagger)
                 if fun == Processor.upscale_image:
+                    if self.upscale is None:
+                        raise NoneUpscaleError()
                     data = fun(data,self.upscale)
                 if bool(processor.get("arg")):
                     data = fun(data, processor.get("arg"))
@@ -224,3 +228,14 @@ class DatasetProcessor:
             data = self.conduct_manager(self.conduct,data)
             if data is not None:
                 data.save(self.output_dir,self.option)
+
+class NoneTaggerError(RuntimeError):
+    def __init__(self,name):
+        print(f"Error:{name} is faild!")
+        print("Tagger is not active!Please add this commit in config:")
+        print("Tagger:\n\tactive: True")
+class NoneUpscaleError(RuntimeError):
+    def __init__(self,name):
+        print(f"Error:{name} is faild!")
+        print("Upscale is not active!Please add this commit in config:")
+        print("upscale:\n\tactive: True")
