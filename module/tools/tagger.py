@@ -235,3 +235,10 @@ class Tagger:
         if len(b_imgs) > 0:
             b_imgs = [(sorce_data, image) for sorce_data, image in b_imgs]  # Convert image_path to string
             self.run_batch(b_imgs)
+
+    def tag_data(self,data:Data):
+        img = preprocess_image(data.img)
+        b_imgs = [(data,img)]
+        self.run_batch(b_imgs)
+        return data
+        

@@ -18,14 +18,14 @@ class Data:
         self.size = self.img.size
 
     # 载入标签
-    def input_token(self, file_name: str,option:dict|None=None):
+    def input_token(self, file_name: str,option=None):
+        clean_tag = False
         NO_CHECK=[ #清洗排除标签
                     ':)',';)',':(','>:)','>:(','\(^o^)/', #括号相关
                     '^_^','@_@','>_@','+_+','+_-','o_o','0_0','|_|','._.','>_<','=_=','<o>_<o>','<|>_<|>' #下划线相关
                   ]
-        if option:
-            if option.get(clean_tag):
-                clean_tag = True
+        if option.clean_tag:
+            clean_tag = True
         with open(os.path.join(self.path, file_name), "r") as f:
             self.token = f.read(-1).split(",")
         for tag in self.token:

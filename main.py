@@ -1,23 +1,8 @@
 from module import *
 
 from module.tools.tagger import Tagger
-
-import os
+from module.tools.upscale import UpscaleModel
 import yaml
-
-def main(input_dir, output_dir, conducts,option:dict|None=None, tagger:Tagger|None=None):
-    data_list = data_list_builder(input_dir,tagger)
-    if not (os.path.exists(output_dir)):
-        os.mkdir(output_dir)
-    i = 0
-    for i in range(0, len(data_list)):
-        data = data_list.pop()
-        data.id = i
-        data = conduct_manager(conducts,data,output_dir,option)
-        if data is None:
-            continue
-        else:
-            data.save(output_dir,option)
 
 
 if __name__ == "__main__":
@@ -30,9 +15,6 @@ if __name__ == "__main__":
     conducts = config.get('conduct')
     option = config.get('option')
     tagger = config.get('tagger')
+    upscale = config.get('upscale')
+    DatasetProcessor(input_dir,output_dir,conducts,option,tagger,upscale).main()
 
-    if tagger:
-        if tagger['active']:
-           tagger=tagger_bulider(tagger)
-        else: tagger=None
-    main(input_dir,output_dir,conducts,option,tagger=tagger)

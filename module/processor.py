@@ -1,5 +1,7 @@
 from random import randint as random
 from .data import Data
+from .tools.tagger import Tagger
+from .tools.upscale import UpscaleModel
 from PIL import Image
 from PIL import ImageEnhance
 import numpy as np
@@ -138,6 +140,13 @@ class Processor:
             data.token.remove(tag_a)
         else:
             raise TagNotExistError(tag_a,data.name + data.ext)
+        return data
+    
+    def tag_image(data:Data,tagger:Tagger):
+        return tagger.tag_data(data)
+    
+    def upscale_image(data:Data,upscale:UpscaleModel):
+        data.img = upscale.upscale_data(data)
         return data
 
 # 自定义异常

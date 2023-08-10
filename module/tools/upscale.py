@@ -3,7 +3,7 @@ from basicsr.archs.rrdbnet_arch import RRDBNet
 from basicsr.utils.download_util import load_file_from_url
 import numpy as np
 from torch import nn as nn
-from PIL import Image
+from PIL.Image import Image,fromarray
 
 from dataclasses import dataclass, field
 import os
@@ -86,5 +86,4 @@ class UpscaleModel(RealESRGANer):
     def upscale_data(self,data:Data)->Image:
         np_img = np.array(data.img)
         img,_ = super().enhance(np_img)
-        img = Image.fromarray(img)
-        return img
+        return fromarray(img)
