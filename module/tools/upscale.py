@@ -68,6 +68,7 @@ class UpscaleModel():
         ModelType.R_CUGAN_4X_D3
         ]
     def __init__(self,option:UpcaleOption|None=UpcaleOption()):
+        print("Init upscale...")
         self.realesrgan=None
         self.realcugan=None
         match option.model_type.value:
@@ -92,49 +93,48 @@ class UpscaleModel():
                 model=RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=6, num_grow_ch=32, scale=4)
                 scale=4
             case ModelType.R_CUGAN_2X_CON.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up2x-latest-conservative.pth"
+                model="models-se"
+                noise=-1
                 scale=2
             case ModelType.R_CUGAN_2X_ND.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up2x-latest-no-denoise.pth"
+                model="models-se"
+                noise=0
                 scale=2
             case ModelType.R_CUGAN_2X_D1.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up2x-latest-denoise1x.pth"
+                model="models-se"
+                noise=1
                 scale=2
             case ModelType.R_CUGAN_2X_D2.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up2x-latest-denoise2x.pth"
+                model="models-se"
+                noise=2
                 scale=2
             case ModelType.R_CUGAN_2X_D3.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up2x-latest-denoise3x.pth"
+                model="models-se"
+                noise=3
                 scale=2
             case ModelType.R_CUGAN_3X_CON.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up3x-latest-conservative.pth"
+                model="models-se"
+                noise=-1
                 scale=3
             case ModelType.R_CUGAN_3X_ND.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up3x-latest-no-denoise.pth"
+                model="models-se"
+                noise=0
                 scale=3
             case ModelType.R_CUGAN_3X_D3.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up3x-latest-denoise3x.pth"
+                model="models-se"
+                noise=3
                 scale=3
             case ModelType.R_CUGAN_4X_CON.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up4x-latest-conservative.pth"
+                model="models-se"
+                noise=-1
                 scale=4
             case ModelType.R_CUGAN_4X_ND.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up4x-latest-no-denoise.pth"
-                model=file
+                model="models-se"
+                noise=0
                 scale=4
             case ModelType.R_CUGAN_4X_D3.value:
-                repoid="JacksonYan/Real-CUGAN"
-                file="up4x-latest-denoise3x.pth"
+                model="models-se"
+                noise=3
                 scale=4
             case ModelType.CUSTOM.value:
                 try:
@@ -149,7 +149,7 @@ class UpscaleModel():
             case _:
                 raise RuntimeError
         print("Loading upscale model...")
-        if option.model_type in self.REAL_ESRGAN_MODEL: #将来我会把这些源换成从抱脸下载
+        if option.model_type in self.REAL_ESRGAN_MODEL: #这是一个过度办法，将来我会把这些源换成从抱脸下载
             if os.path.exists(os.path.join(option.model_path,file)):
                 model_path = os.path.join(option.model_path,file)
             else:
@@ -166,20 +166,16 @@ class UpscaleModel():
             gpuid=option.gpuid
             self.realesrgan =RealESRGANModel(scale, model_path, model, tile, tile_pad, pre_pad, half,gpu_id=gpuid)
         if option.model_type in self.REAL_CUGAN_MODEL:
-            if os.path.exists(os.path.join(option.model_path,file)):
-                model_path = os.path.join(option.model_path,file)
-            else:
-                model_path = os.path.join(option.model_path,'real_cugan')
-                if option.model_type is not ModelType.CUSTOM.value and (
-                    not os.path.exists(os.path.join(option.model_path,file)) or option.force_download) :
-                    hf_hub_download(repoid,file,"weights",cache_dir=option.model_path,force_download=True,force_filename=file)
-            model = os.path.join(option.model_path,file)
             tile_size = option.tile
-            RealcuganModel(gpuid=gpuid,tilesize=tile_size,scale=scale,model=model)
+            gpuid=option.gpuid
+            self.realcugan=RealcuganModel(gpuid,noise=noise,scale=scale,model=model,tilesize=tile_size)
 
 
     def upscale_data(self,data:Data)->Image:
-        np_img = np.array(data.img)
         if self.realesrgan:
+            np_img = np.array(data.img)
             np_img,_ = self.realesrgan.enhance(np_img)
-        return fromarray(np_img)
+            return fromarray(np_img)
+        if self.realcugan:
+            return self.realcugan.process_pil(data.img)
+        

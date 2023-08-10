@@ -71,11 +71,7 @@ class ImageLoadingPrepDataset(torch.utils.data.Dataset):
     def __init__(self,data_list:list[Data]) -> None:
         self.dataset = []
         for data in data_list:
-            self.dataset.append(
-                {'img':data.img,
-                 'sorce_data':data
-                }
-                )
+            self.dataset.append({'img':data.img,'sorce_data':data})
     def __len__(self):
         return len(self.dataset)
     

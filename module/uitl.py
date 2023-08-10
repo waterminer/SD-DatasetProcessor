@@ -1,8 +1,10 @@
+from tqdm import tqdm
+
 from module import Data
 from module import Filter
 from module import Processor, ProcessorError
-from .tools.tagger import Tagger,TaggerOption
-from .tools.upscale import UpcaleOption,UpscaleModel
+from .tools.tagger import Tagger,TaggerOption,ModelType as TaggerType
+from .tools.upscale import UpcaleOption,UpscaleModel,ModelType as UpscaleType
 import copy
 import os
 
@@ -15,7 +17,9 @@ def tagger_bulider(args:dict)->Tagger:
     if args.get('model_path'):
         option.model_path = args['model_path']
     if args.get('model_type'):
-        option.model_type = args['model_type']
+        try:option.model_type = TaggerType[args['model_type']]
+        except KeyError:
+            print(f"Invalid type:{args['model_type']}")
     if args.get('force_download'):
         option.force_download = args['force_download']
     if args.get('undesired_tags'):
@@ -41,7 +45,9 @@ def upscale_model_bulider(args:dict)->UpscaleModel:
     if args.get('force_download'):
         UpcaleOption.force_download = args['force_download']
     if args.get('model_type'):
-        UpcaleOption.model_type = args['model_type']
+        try:UpcaleOption.model_type = UpscaleType[args['model_type']]
+        except KeyError:
+            print(f"Invalid type:{args['model_type']}")
     if args.get('tile'):
         UpcaleOption.tile = args['tile']
     if args.get('tile_pad'):
@@ -96,16 +102,12 @@ class DatasetProcessor:
         self.input_dir=input_dir
         self.conduct=conduct
         self.output_dir=output_dir
-        if tagger:
-            self.tagger = tagger_bulider(tagger)
+        if tagger and tagger.get('active'):self.tagger = tagger_bulider(tagger)
         else: self.tagger = None
-        if upscale:
-            self.upscale = upscale_model_bulider(upscale)
+        if upscale and upscale.get('active'):self.upscale = upscale_model_bulider(upscale)
         else: self.upscale = None
-        if option:
-            self.option = MainOption(option)
-        else:
-            self.option = MainOption()
+        if option:self.option = MainOption(option)
+        else:self.option = MainOption()
         self.data_list = self.data_list_builder(input_dir)
         
     # 匹配标签
@@ -128,8 +130,8 @@ class DatasetProcessor:
         token_list = []
         no_paired_data_list = []
         count = 0
-        print("开始读取文件\n")
-        for file_name in os.listdir(input_dir):  # 读取图片
+        print("load files...\n开始读取文件...")
+        for file_name in tqdm(os.listdir(input_dir)):  # 读取图片
             splitext = os.path.splitext(file_name)
             name = splitext[0]
             ext = splitext[1]
@@ -147,7 +149,7 @@ class DatasetProcessor:
             str(no_paired_data_list.__len__()) + "张图片没有配对的标签"
         )
         if self.tagger:
-            if self.option.tag_no_paired_data:
+            if self.option.tag_no_paired_data and no_paired_data_list!=[]:
                 print("已启用对未标签的图片进行打标")
                 self.tagger.tag_data_list(no_paired_data_list)
             if self.option.force_tag_all:
@@ -173,20 +175,34 @@ class DatasetProcessor:
                 fun = getattr(Processor, processor.get('method'))
                 if fun == Processor.tag_image:
                     if self.tagger is None:
-                        raise NoneTaggerError()
+                        raise NoneTaggerError('tag_image')
                     data = fun(data,self.tagger)
-                if fun == Processor.upscale_image:
+                elif fun == Processor.upscale_image:
                     if self.upscale is None:
-                        raise NoneUpscaleError()
+                        raise NoneUpscaleError('upscale_image')
                     data = fun(data,self.upscale)
-                if bool(processor.get("arg")):
+                elif bool(processor.get("arg")):
                     data = fun(data, processor.get("arg"))
                 else:
                     data = fun(data)
             except ProcessorError:
                 raise ProcessorError
             except AttributeError:
-                print("输入错误：不存在的method："+processor.get('method')+"\n请检查配置文件")
+                print(f"\nError:\nInvalid method: {processor.get('method')}\nPlease check the config file")
+                exit(1)
+            except NoneUpscaleError as e:
+                print(f"\nError:{e.name} is faild!")
+                print("Upscale is not active!Please add this commit in config:")
+                print("======================")
+                print("upscale:\n  active: True")
+                print("======================")
+                exit(1)
+            except NoneTaggerError as e:
+                print(f"\nError:{e.name} is faild!")
+                print("Tagger is not active!Please add this commit in config:")
+                print("======================")
+                print("Tagger:\n  active: True")
+                print("======================")
                 exit(1)
         return data
 
@@ -222,7 +238,8 @@ class DatasetProcessor:
                     break
 
     def main(self):
-        for i in range(0,len(self.data_list)):
+        print("开始图片处理...")
+        for i in tqdm(range(0,len(self.data_list))):
             data = self.data_list.pop()
             data.id=i
             data = self.conduct_manager(self.conduct,data)
@@ -231,11 +248,8 @@ class DatasetProcessor:
 
 class NoneTaggerError(RuntimeError):
     def __init__(self,name):
-        print(f"Error:{name} is faild!")
-        print("Tagger is not active!Please add this commit in config:")
-        print("Tagger:\n\tactive: True")
+        self.name = name
 class NoneUpscaleError(RuntimeError):
     def __init__(self,name):
-        print(f"Error:{name} is faild!")
-        print("Upscale is not active!Please add this commit in config:")
-        print("upscale:\n\tactive: True")
+        self.name = name
+        

@@ -37,17 +37,17 @@ class Data:
                     tag = tag.replace(")","\\)")
             
     # 保存的方法
-    def save(self, output_dir,option:dict|None=None):
+    def save(self, output_dir,option):
         #默认命名方式：id_conduct_repeat.ext 比如"000001_r_0.jpg"
         save_name = str(self.id).zfill(6) + self.conduct +"_"+ str(self.repeat)
         if option:
-            if option.get('save_sorce_name') or option.get('save_conduct_id') or option.get('save_repeat'):
+            if option.save_sorce_name or option.save_conduct_id or option.save_repeat:
                 save_name=str(self.id).zfill(6)
-                if option.get('save_sorce_name'):
+                if option.save_sorce_name:
                     save_name = save_name.join('_'+self.name)
-                if option.get('save_conduct_id'):
+                if option.save_conduct_id:
                     save_name = save_name.join(self.conduct)
-                if option.get('save_repeat'):
+                if option.save_repeat:
                     save_name = save_name.join('_'+self.repeat)
         self.img.save(os.path.join(output_dir, save_name + self.ext))
         # print(save_name)
