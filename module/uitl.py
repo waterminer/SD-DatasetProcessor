@@ -78,7 +78,7 @@ class MainOption:
 
         if args.get('clean_tag'):
             self.clean_tag=args.get('clean_tag')
-        else:self.clean_tag=False
+        else:self.clean_tag=True
 
         if args.get('tag_no_paired_data'):
             self.tag_no_paired_data=args.get('tag_no_paired_data')

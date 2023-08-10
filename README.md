@@ -22,6 +22,8 @@
 
 ✅自动打标（试验性）
 
+✅AI图片放大（试验性）
+
 ✅子处理（试验性）
 
 ## TODO
@@ -40,7 +42,7 @@
 
 [Real CUGAN](https://github.com/bilibili/ailab/tree/main/Real-CUGAN)：更加适合二次元的AI放大方案
 
-[Real CUGAN-ncnn](https://github.com/Tohrusky/realcugan-ncnn-py)：感谢这位作者提供的RealCUGAN工具包让我不用重复造轮子
+[Real CUGAN-ncnn](https://github.com/Tohrusky/realcugan-ncnn-py)：感谢这位作者提供的RealCUGAN工具包
 
 ### Tagger
 
