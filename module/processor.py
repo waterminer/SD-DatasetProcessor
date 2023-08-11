@@ -33,15 +33,16 @@ class Processor:
         return data
 
     def resize(data: Data, proportion: float):
-        data.size = (int(data.size[0] * proportion), int(data.size[1] * proportion))
-        data.img = data.img.resize(data.size)
+        size = (int(data.size[0] * proportion), int(data.size[1] * proportion))
+        data.img = data.img.resize(size)
         data.conduct += "_r"
+        data.size = data.img.size
         return data
 
     def force_resize(data: Data, size: list):
-        data.size = (size[0], size[1])
-        data.img = data.img.resize(data.size)
+        data.img = data.img.resize(size)
         data.conduct += "_fr"
+        data.size = data.img.size
         return data
     
     def offset(data: Data,offset:int):
@@ -147,6 +148,7 @@ class Processor:
     
     def upscale_image(data:Data,upscale:UpscaleModel):
         data.img = upscale.upscale_data(data)
+        data.size = data.img.size
         return data
 
 # 自定义异常

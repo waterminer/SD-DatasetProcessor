@@ -101,6 +101,8 @@ class DatasetProcessor:
                  ):
         self.input_dir=input_dir
         self.conduct=conduct
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
         self.output_dir=output_dir
         if tagger and tagger.get('active'):self.tagger = tagger_bulider(tagger)
         else: self.tagger = None
@@ -207,44 +209,49 @@ class DatasetProcessor:
         return data
 
 
-    def conduct_manager(self,conducts:list,data:Data)->Data:
-        new_data = copy.deepcopy(data)
+    def conduct_manager(self,conducts:list[dict],data_list:list[Data])->list[Data]:
+        return_list = []
         for conduct in conducts:
             if conduct.get('sub_conduct'):
-                sub_data = copy.copy(new_data)
-                sub_data.conduct += "_sub["
-                sub_data = self.conduct_manager(conduct.get('sub_conduct'),sub_data)
-                if sub_data is not None:
-                    sub_data.conduct += "]"
-                    new_data.img = sub_data.img.copy()
-                    new_data.conduct += sub_data.conduct
+                sub_data_list=[copy.deepcopy(data) for data in data_list]
+                for data in sub_data_list:
+                    data.conduct+="_sub["
+                sub_data_list = self.conduct_manager(conduct.get('sub_conduct'),sub_data_list)
+                if sub_data_list:
+                    for data in sub_data_list:
+                        data.conduct+="]"
+                    data_list=sub_data_list
                     if self.option.save_sub:
                         sub_output=os.path.join(self.output_dir,"sub")
                         if not (os.path.exists(sub_output)):
                             os.mkdir(sub_output)
-                        sub_data.save(sub_output,self.option)
-            filters = conduct.get('filters')
-            if filters:
-                if self.filter_manager(filters, new_data): continue
-            if bool(conduct.get('repeat')):
-                repeat = conduct.get('repeat')
-            else:
-                repeat = 1
-            for j in range(0, repeat):
-                new_data.repeat = j
-                try:
-                    return self.processor_manager(conduct.get('processor'), new_data)
-                except ProcessorError:
-                    break
+                        for sub_data in sub_data_list:
+                            sub_data.save(sub_output,self.option)
+            for data in data_list:
+                filters = conduct.get('filters')
+                if filters:
+                    if self.filter_manager(filters, data): continue
+                if bool(conduct.get('repeat')):
+                    repeat = conduct.get('repeat')
+                else:
+                    repeat = 1
+                for j in range(0, repeat):
+                    data.repeat = j
+                    try:
+                        return_list.append(self.processor_manager(conduct.get('processor'), copy.deepcopy(data)))
+                    except ProcessorError:
+                        break
+        return return_list
 
     def main(self):
         print("开始图片处理...")
         for i in tqdm(range(0,len(self.data_list))):
             data = self.data_list.pop()
             data.id=i
-            data = self.conduct_manager(self.conduct,data)
-            if data is not None:
-                data.save(self.output_dir,self.option)
+            data_list = self.conduct_manager(self.conduct,[data])
+            if data_list:
+                for data in data_list:
+                    data.save(self.output_dir,self.option)
 
 class NoneTaggerError(RuntimeError):
     def __init__(self,name):
