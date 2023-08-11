@@ -216,7 +216,7 @@ upscale:
 你可以像这样来配置打标设置:
 
 ``` yaml
-Tagger:
+upscale:
   active: True
   model_type: R_CUGAN_2X_CON
 ```

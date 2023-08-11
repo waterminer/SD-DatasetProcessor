@@ -211,18 +211,19 @@ class DatasetProcessor:
 
     def conduct_manager(self,conducts:list[dict],data_list:list[Data])->list[Data]:
         return_list = []
+        output_dir = self.output_dir
         for conduct in conducts:
             if conduct.get('sub_conduct'):
-                sub_data_list=[copy.deepcopy(data) for data in data_list]
+                sub_data_list=[copy.copy(data) for data in data_list]
                 for data in sub_data_list:
                     data.conduct+="_sub["
                 sub_data_list = self.conduct_manager(conduct.get('sub_conduct'),sub_data_list)
                 if sub_data_list:
                     for data in sub_data_list:
                         data.conduct+="]"
-                    data_list=sub_data_list
+                    data_list=copy.deepcopy(sub_data_list)
                     if self.option.save_sub:
-                        sub_output=os.path.join(self.output_dir,"sub")
+                        sub_output=os.path.join(output_dir,"sub")
                         if not (os.path.exists(sub_output)):
                             os.mkdir(sub_output)
                         for sub_data in sub_data_list:
