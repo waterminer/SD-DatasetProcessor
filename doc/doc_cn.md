@@ -65,7 +65,7 @@ conduct:
 
 |名称|说明|
 |--|--|
-|save_sorce_name|保存原文件名称|
+|save_source_name|保存原文件名称|
 |save_conduct_id|保存处理id|
 |save_sub|保存子处理|
 |clean_tag|清洗标签(将"_"换成空格，给括号加上"\")，默认开启|
@@ -118,7 +118,7 @@ option:
 | -- | -- | -- |
 |img_size|过虑特定尺寸的图片|数组，输入格式为[max,min]，缺省填-1 |
 |tag_filter|过滤掉特定标签|标签（文本）|
-|tag_selecter|须要包含特定标签|标签（文本）|
+|tag_selector|须要包含特定标签|标签（文本）|
 |tag_is_not_none|只含有带标签的图片|-|
 |tag_is_none|只含有不带标签的图片|-|
 
