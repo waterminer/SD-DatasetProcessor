@@ -186,7 +186,7 @@ class DatasetProcessor:
             except ProcessorError:
                 raise ProcessorError
             except AttributeError:
-                print(f"\nError:\nInvalid method: {processor.get('method')}\nPlease check the config file")
+                print(f"\nError:Invalid method: {processor.get('method')}\nPlease check the config file")
                 exit(1)
             except NoneUpscaleError as e:
                 print(f"\nError:{e.name} is faild!")

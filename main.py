@@ -17,4 +17,3 @@ if __name__ == "__main__":
     tagger = config.get('tagger')
     upscale = config.get('upscale')
     DatasetProcessor(input_dir,output_dir,conducts,option,tagger,upscale).main()
-
