@@ -67,7 +67,6 @@ conduct:
 |--|--|
 |save_sorce_name|保存原文件名称|
 |save_conduct_id|保存处理id|
-|save_repeat|保存重复次数|
 |save_sub|保存子处理|
 |clean_tag|清洗标签(将"_"换成空格，给括号加上"\")，默认开启|
 |tag_no_paired_data|自动对没有标签的图片进行打标，需要配置`tagger`，默认开启|

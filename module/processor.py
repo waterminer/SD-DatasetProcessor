@@ -15,44 +15,44 @@ class Processor:
         return data
     """
 
-    def random_crop(data, size):
+    def random_crop(data:Data, size):
         if not (data.size[0] <= size or data.size[1] <= size):
             x = random(1, data.size[0] - size)
             y = random(1, data.size[1] - size)
             box = (x, y, x + size, y + size)
             data.img = data.img.crop(box)
-            data.conduct += "_rc"
+            data.conduct += f"_rc{data.repeat}"
             data.size = data.img.size
         else:
             raise ImageTooSmallError(data.name + data.ext)
         return data
 
-    def flip(data):
+    def flip(data:Data):
         data.img = data.img.transpose(Image.FLIP_LEFT_RIGHT)
-        data.conduct += "_f"
+        data.conduct += f"_f{data.repeat}"
         return data
 
     def resize(data: Data, proportion: float):
         size = (int(data.size[0] * proportion), int(data.size[1] * proportion))
         data.img = data.img.resize(size)
-        data.conduct += "_r"
+        data.conduct += f"_r{data.repeat}"
         data.size = data.img.size
         return data
 
     def force_resize(data: Data, size: list):
         data.img = data.img.resize(size)
-        data.conduct += "_fr"
+        data.conduct += f"_fr{data.repeat}"
         data.size = data.img.size
         return data
     
     def offset(data: Data,offset:int):
         data.img = data.img.offset(offset,0)
-        data.conduct += "_off"
+        data.conduct += f"_off{data.repeat}"
         return data
     
     def rotation(data: Data, rot:int):
         data.img = data.img.rotate(rot)
-        data.conduct += "_rot"
+        data.conduct += f"_rot{data.repeat}"
         return data
     
     def contrast_enhancement(data: Data): #对比度增强
@@ -60,7 +60,7 @@ class Processor:
         enh_con = ImageEnhance.Contrast(image)
         contrast = 1.5
         data.img = enh_con.enhance(contrast)
-        data.conduct += "_con_e"
+        data.conduct += f"_con_e{data.repeat}"
         return data
     
     def brightness_enhancement(data: Data):#亮度增强
@@ -68,7 +68,7 @@ class Processor:
         enh_bri = ImageEnhance.Brightness(image)
         brightness = 1.5
         data.img = enh_bri.enhance(brightness)
-        data.conduct += "_bri_e"
+        data.conduct += f"_bri_e{data.repeat}"
         return data
 
     def color_enhancement(data: Data):#颜色增强
@@ -94,7 +94,7 @@ class Processor:
         contrast_image = ImageEnhance.Contrast(brightness_image).enhance(random_factor)  # 调整图像对比度
         random_factor = np.random.randint(8, 20) / 10.  # 随机因子
         data.img = ImageEnhance.Sharpness(contrast_image).enhance(random_factor)  # 调整图像锐度
-        data.conduct += "_ran_e"
+        data.conduct += f"_ran_e{data.repeat}"
         return data
 
     def none(data: Data):

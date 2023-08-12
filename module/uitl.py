@@ -68,10 +68,6 @@ class MainOption:
             self.save_conduct_id=args.get('save_conduct_id')
         else:self.save_conduct_id=False
 
-        if args.get('save_repeat'):
-            self.save_repeat=args.get('save_repeat')
-        else:self.save_repeat=False
-
         if args.get('save_sub'):
             self.save_sub=args.get('save_sub')
         else:self.save_sub=False
