@@ -1,5 +1,11 @@
 from setuptools import setup, find_packages
 
+
+requires = []
+with open('requirements.txt', encoding='utf8') as f:
+    for x in f.readlines():
+        requires.append(f'{x.strip()}')
+
 setup(
     name='dataset_processor',
     version='0.3.0',
@@ -15,5 +21,6 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3.10',
     ],
+    install_requires=requires
 )
 
