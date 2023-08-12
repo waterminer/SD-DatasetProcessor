@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 
 
-from module import Data
+from dataset_processor import Data
 from dataclasses import dataclass, field
 import os
 from enum import Enum
@@ -71,11 +71,7 @@ class ImageLoadingPrepDataset(torch.utils.data.Dataset):
     def __init__(self,data_list:list[Data]) -> None:
         self.dataset = []
         for data in data_list:
-            self.dataset.append(
-                {'img':data.img,
-                 'sorce_data':data
-                }
-                )
+            self.dataset.append({'img':data.img,'sorce_data':data})
     def __len__(self):
         return len(self.dataset)
     
@@ -235,3 +231,10 @@ class Tagger:
         if len(b_imgs) > 0:
             b_imgs = [(sorce_data, image) for sorce_data, image in b_imgs]  # Convert image_path to string
             self.run_batch(b_imgs)
+
+    def tag_data(self,data:Data):
+        img = preprocess_image(data.img)
+        b_imgs = [(data,img)]
+        self.run_batch(b_imgs)
+        return data
+        
