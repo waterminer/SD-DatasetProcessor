@@ -18,12 +18,12 @@ class Data:
         self.size = self.img.size
 
     # 载入标签
-    def input_token(self, file_name: str,option=None):
+    def input_token(self, file_name: str, option=None):
         clean_tag = False
-        NO_CHECK=[ #清洗排除标签
-                    ':)',';)',':(','>:)','>:(','\(^o^)/', #括号相关
-                    '^_^','@_@','>_@','+_+','+_-','o_o','0_0','|_|','._.','>_<','=_=','<o>_<o>','<|>_<|>' #下划线相关
-                  ]
+        NO_CHECK = [  # 清洗排除标签
+            ':)', ';)', ':(', '>:)', '>:(', '\\(^o^)/',  # 括号相关
+            '^_^', '@_@', '>_@', '+_+', '+_-', 'o_o', '0_0', '|_|', '._.', '>_<', '=_=', '<o>_<o>', '<|>_<|>'  # 下划线相关
+        ]
         if option.clean_tag:
             clean_tag = True
         with open(os.path.join(self.path, file_name), "r") as f:
@@ -32,19 +32,19 @@ class Data:
             tag = tag.strip()
             if clean_tag:
                 if tag not in NO_CHECK:
-                    tag = tag.replace("_"," ")
-                    tag = tag.replace("(","\\(")
-                    tag = tag.replace(")","\\)")
-            
+                    tag = tag.replace("_", " ")
+                    tag = tag.replace("(", "\\(")
+                    tag = tag.replace(")", "\\)")
+
     # 保存的方法
-    def save(self, output_dir,option):
-        #默认命名方式：id_conduct_repeat.ext 比如"000001_r_0.jpg"
+    def save(self, output_dir, option):
+        # 默认命名方式：id_conduct_repeat.ext 比如"000001_r_0.jpg"
         save_name = str(self.id).zfill(6) + self.conduct
         if option:
-            if option.save_sorce_name or option.save_conduct_id:
-                save_name=str(self.id).zfill(6)
-                if option.save_sorce_name:
-                    save_name = save_name.join('_'+self.name)
+            if option.save_source_name or option.save_conduct_id:
+                save_name = str(self.id).zfill(6)
+                if option.save_source_name:
+                    save_name = save_name.join('_' + self.name)
                 if option.save_conduct_id:
                     save_name = save_name.join(self.conduct)
         self.img.save(os.path.join(output_dir, save_name + self.ext))

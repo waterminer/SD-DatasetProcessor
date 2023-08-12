@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 
 
-from module import Data
+from dataset_processor import Data
 from dataclasses import dataclass, field
 import os
 from enum import Enum

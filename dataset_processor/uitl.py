@@ -1,10 +1,10 @@
 from tqdm import tqdm
 
-from module import Data
-from module import Filter
-from module import Processor, ProcessorError
-from .tools.tagger import Tagger,TaggerOption,ModelType as TaggerType
-from .tools.upscale import UpcaleOption,UpscaleModel,ModelType as UpscaleType
+from dataset_processor import Data
+from dataset_processor import Filter
+from dataset_processor import Processor, ProcessorError
+from .tools.tagger import Tagger, TaggerOption, ModelType as TaggerType
+from .tools.upscale import UpcaleOption, UpscaleModel, ModelType as UpscaleType
 import copy
 import os
 
@@ -12,12 +12,14 @@ import os
 IMG_EXT = [".png", ".jpg"]  # 支持的图片格式
 TEXT_EXT = [".txt"]  # 支持的标签格式
 
-def tagger_bulider(args:dict)->Tagger:
+
+def tagger_builder(args: dict) -> Tagger:
     option = TaggerOption()
     if args.get('model_path'):
         option.model_path = args['model_path']
     if args.get('model_type'):
-        try:option.model_type = TaggerType[args['model_type']]
+        try:
+            option.model_type = TaggerType[args['model_type']]
         except KeyError:
             print(f"Invalid type:{args['model_type']}")
     if args.get('force_download'):
@@ -38,14 +40,16 @@ def tagger_bulider(args:dict)->Tagger:
         option.general_threshold = args['general_threshold']
     return Tagger(option)
 
-def upscale_model_bulider(args:dict)->UpscaleModel:
-    option = UpcaleOption
+
+def upscale_model_builder(args: dict) -> UpscaleModel:
+    option = UpcaleOption()
     if args.get('model_path'):
         UpcaleOption.model_path = args['model_path']
     if args.get('force_download'):
         UpcaleOption.force_download = args['force_download']
     if args.get('model_type'):
-        try:UpcaleOption.model_type = UpscaleType[args['model_type']]
+        try:
+            UpcaleOption.model_type = UpscaleType[args['model_type']]
         except KeyError:
             print(f"Invalid type:{args['model_type']}")
     if args.get('tile'):
@@ -58,82 +62,100 @@ def upscale_model_bulider(args:dict)->UpscaleModel:
         UpcaleOption.half = args['half']
     return UpscaleModel(option)
 
+
 class MainOption:
-    def __init__(self,args={}):
-        if args.get('save_sorce_name'):
-            self.save_sorce_name=args.get('save_sorce_name')
-        else:self.save_sorce_name=False
+    def __init__(self, args={}):
+        if args.get('save_source_name'):
+            self.save_source_name = args.get('save_source_name')
+        else:
+            self.save_source_name = False
 
         if args.get('save_conduct_id'):
-            self.save_conduct_id=args.get('save_conduct_id')
-        else:self.save_conduct_id=False
+            self.save_conduct_id = args.get('save_conduct_id')
+        else:
+            self.save_conduct_id = False
 
         if args.get('save_sub'):
-            self.save_sub=args.get('save_sub')
-        else:self.save_sub=False
+            self.save_sub = args.get('save_sub')
+        else:
+            self.save_sub = False
 
         if args.get('clean_tag'):
-            self.clean_tag=args.get('clean_tag')
-        else:self.clean_tag=True
+            self.clean_tag = args.get('clean_tag')
+        else:
+            self.clean_tag = True
 
         if args.get('tag_no_paired_data'):
-            self.tag_no_paired_data=args.get('tag_no_paired_data')
-        else:self.tag_no_paired_data=True
+            self.tag_no_paired_data = args.get('tag_no_paired_data')
+        else:
+            self.tag_no_paired_data = True
 
         if args.get('force_tag_all'):
-            self.force_tag_all=args.get('force_tag_all')
-        else:self.force_tag_all=False
+            self.force_tag_all = args.get('force_tag_all')
+        else:
+            self.force_tag_all = False
+
 
 class DatasetProcessor:
-    def data_list_builder(self,input_dir:str)->list[Data]:...
-    def pair_token(self,token_list: list, data_list: list[Data]):...
+    """
+    构建DatasetProcessor对象以开始数据处理
+    """
+    upscale: UpscaleModel = None
+    tagger: Tagger = None
+    option: MainOption = None
+
+    def data_list_builder(self, input_dir: str) -> list[Data]:
+        ...
+
+    def pair_token(self, token_file_list: list, data_list: list[Data]):
+        ...
+
     def __init__(self,
-                 input_dir:str,
-                 output_dir:str,
-                 conduct:dict,
-                 option:dict|None=None,
-                 tagger:dict|None=None,
-                 upscale:dict|None=None
+                 input_dir: str,
+                 output_dir: str,
+                 conduct: dict,
+                 option: dict | None = None,
+                 tagger: dict | None = None,
+                 upscale: dict | None = None
                  ):
-        self.input_dir=input_dir
-        self.conduct=conduct
+        self.input_dir = input_dir
+        self.conduct = conduct
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        self.output_dir=output_dir
-        if tagger and tagger.get('active'):self.tagger = tagger_bulider(tagger)
-        else: self.tagger = None
-        if upscale and upscale.get('active'):self.upscale = upscale_model_bulider(upscale)
-        else: self.upscale = None
-        if option:self.option = MainOption(option)
-        else:self.option = MainOption()
+        self.output_dir = output_dir
+        if tagger and tagger.get('active'): self.tagger = tagger_builder(tagger)
+        if upscale and upscale.get('active'): self.upscale = upscale_model_builder(upscale)
+        if option:
+            self.option = MainOption(option)
+        else:
+            self.option = MainOption()
         self.data_list = self.data_list_builder(input_dir)
-        
+
     # 匹配标签
-    def pair_token(self,token_file_list: list, data_list: list[Data]):
+    def pair_token(self, token_file_list: list, data_list: list[Data]):
         no_paired_data_list = []
         for data in data_list:
             for file_name in token_file_list:
                 splitext = os.path.splitext(file_name)
                 name = splitext[0]
                 if name == data.name:
-                    data.input_token(file_name,self.option)
+                    data.input_token(file_name, self.option)
                     token_file_list.remove(file_name)
             if not data.token:
                 no_paired_data_list.append(data)
         return no_paired_data_list
 
     # 读取文件并建立列表
-    def data_list_builder(self,input_dir:str)->list[Data]:
+    def data_list_builder(self, input_dir: str) -> list[Data]:
         data_list: list[Data] = []
         token_list = []
         no_paired_data_list = []
         count = 0
         print("load files...\n开始读取文件...")
-        for file_name in tqdm(os.listdir(input_dir)):  # 读取图片
+        for file_name in tqdm(os.listdir(input_dir)):
             splitext = os.path.splitext(file_name)
             name = splitext[0]
             ext = splitext[1]
-            # 如果是图片
             if ext in IMG_EXT:
                 img = Data(input_dir, name, ext)
                 data_list.append(img)
@@ -147,17 +169,17 @@ class DatasetProcessor:
             str(no_paired_data_list.__len__()) + "张图片没有配对的标签"
         )
         if self.tagger:
-            if self.option.tag_no_paired_data and no_paired_data_list!=[]:
+            if self.option.tag_no_paired_data and no_paired_data_list != []:
                 print("已启用对未标签的图片进行打标")
                 self.tagger.tag_data_list(no_paired_data_list)
             if self.option.force_tag_all:
                 print("已强制对所有图片进行机器标注")
                 self.tagger.tag_data_list(data_list)
         return data_list
-    
-    #过滤器管理
-    def filter_manager(self,filter_list: list, data: Data) -> bool:
-        flag=False
+
+    # 过滤器管理
+    def filter_manager(self, filter_list: list, data: Data) -> bool:
+        flag = False
         for filter in filter_list:
             fun = getattr(Filter, filter.get('filter'))
             if filter.get('arg'):
@@ -166,19 +188,19 @@ class DatasetProcessor:
                 if fun(data): return True
         return False
 
-    #处理器管理
-    def processor_manager(self,processor_list: list, data: Data):
+    # 处理器管理
+    def processor_manager(self, processor_list: list, data: Data):
         for processor in processor_list:
             try:
                 fun = getattr(Processor, processor.get('method'))
                 if fun == Processor.tag_image:
                     if self.tagger is None:
                         raise NoneTaggerError('tag_image')
-                    data = fun(data,self.tagger)
+                    data = fun(data, self.tagger)
                 elif fun == Processor.upscale_image:
                     if self.upscale is None:
                         raise NoneUpscaleError('upscale_image')
-                    data = fun(data,self.upscale)
+                    data = fun(data, self.upscale)
                 elif bool(processor.get("arg")):
                     data = fun(data, processor.get("arg"))
                 else:
@@ -204,26 +226,29 @@ class DatasetProcessor:
                 exit(1)
         return data
 
-
-    def conduct_manager(self,conducts:list[dict],data_list:list[Data])->list[Data]:
+    def conduct_manager(self, conducts: list[dict], data_list: list[Data]) -> list[Data]:
+        """
+        处理行为管理函数，虽然可以接受data_list，但是存在文件名碰撞隐患
+        推荐只传入一个data对象
+        """
         return_list = []
         output_dir = self.output_dir
         for conduct in conducts:
             if conduct.get('sub_conduct'):
-                sub_data_list=[copy.copy(data) for data in data_list]
+                sub_data_list = [copy.copy(data) for data in data_list]
                 for data in sub_data_list:
-                    data.conduct+="_sub["
-                sub_data_list = self.conduct_manager(conduct.get('sub_conduct'),sub_data_list)
+                    data.conduct += "_sub["
+                sub_data_list = self.conduct_manager(conduct.get('sub_conduct'), sub_data_list)
                 if sub_data_list:
                     for data in sub_data_list:
-                        data.conduct+="]"
-                    data_list=copy.deepcopy(sub_data_list)
+                        data.conduct += "]"
+                    data_list = copy.deepcopy(sub_data_list)
                     if self.option.save_sub:
-                        sub_output=os.path.join(output_dir,"sub")
+                        sub_output = os.path.join(output_dir, "sub")
                         if not (os.path.exists(sub_output)):
                             os.mkdir(sub_output)
                         for sub_data in sub_data_list:
-                            sub_data.save(sub_output,self.option)
+                            sub_data.save(sub_output, self.option)
             for data in data_list:
                 filters = conduct.get('filters')
                 if filters:
@@ -241,19 +266,24 @@ class DatasetProcessor:
         return return_list
 
     def main(self):
+        """
+        主入口
+        """
         print("开始图片处理...")
-        for i in tqdm(range(0,len(self.data_list))):
+        for i in tqdm(range(0, len(self.data_list))):
             data = self.data_list.pop()
-            data.id=i
-            data_list = self.conduct_manager(self.conduct,[data])
+            data.id = i
+            data_list = self.conduct_manager(self.conduct, [data])
             if data_list:
                 for data in data_list:
-                    data.save(self.output_dir,self.option)
+                    data.save(self.output_dir, self.option)
+
 
 class NoneTaggerError(RuntimeError):
-    def __init__(self,name):
+    def __init__(self, name):
         self.name = name
+
+
 class NoneUpscaleError(RuntimeError):
-    def __init__(self,name):
+    def __init__(self, name):
         self.name = name
-        

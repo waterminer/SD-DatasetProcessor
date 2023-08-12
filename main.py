@@ -1,7 +1,5 @@
-from module import *
+from dataset_processor import *
 
-from module.tools.tagger import Tagger
-from module.tools.upscale import UpscaleModel
 import yaml
 
 
