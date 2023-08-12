@@ -1,10 +1,15 @@
 from setuptools import setup, find_packages
-
+import os
 
 requires = []
 with open('requirements.txt', encoding='utf8') as f:
     for x in f.readlines():
         requires.append(f'{x.strip()}')
+
+data_files = [('conf',['conf.yaml'])]
+
+for f in os.listdir('./doc'):
+    data_files.append(('doc',['doc/'+f]))
 
 setup(
     name='dataset_processor',
@@ -21,6 +26,7 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3.10',
     ],
-    install_requires=requires
+    install_requires=requires,
+    data_files=data_files
 )
 
