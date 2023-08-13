@@ -2,6 +2,7 @@ from random import randint as random
 from .data import Data
 from .tools.tagger import Tagger
 from .tools.upscale import UpscaleModel
+from .tools.smartcrop import SmartCrop
 from PIL import Image
 from PIL import ImageEnhance
 import numpy as np
@@ -41,6 +42,9 @@ class Processor:
         return data
 
     def force_resize(data: Data, size: list) -> Data:
+        """
+        size: [x,y]
+        """
         data.img = data.img.resize(size)
         data.conduct += f"_fr{data.repeat}"
         data.size = data.img.size
@@ -139,11 +143,23 @@ class Processor:
             raise TagNotExistError(tag_a, data.name + data.ext)
         return data
 
-    def tag_image(data: Data, tagger: Tagger):
+    def tag_image(data: Data, tagger: Tagger)->Data:
         return tagger.tag_data(data)
 
-    def upscale_image(data: Data, upscale: UpscaleModel):
+    def upscale_image(data: Data, upscale: UpscaleModel)->Data:
         data.img = upscale.upscale_data(data)
+        data.size = data.img.size
+        return data
+    
+    def smart_crop(data:Data,size:list)->Data:
+        """
+        size: [x,y]
+        """
+        size = tuple(size)
+        smart_crop = SmartCrop()
+        top_crop = smart_crop.crop(data.img,size[0],size[1])['top_crop']
+        box = (top_crop['x'],top_crop['y'],top_crop['width'],top_crop['height'])
+        data.img = data.img.crop(box).resize(size)
         data.size = data.img.size
         return data
 

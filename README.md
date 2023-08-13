@@ -48,5 +48,9 @@
 
 [WD-1.4-Tagger From SmilingWolf](https://huggingface.co/SmilingWolf)：自动打标模型
 
+### Other
+
+[Smart Crop](https://github.com/smartcrop/smartcrop.py)
+
 ---
 如果这个项目为您提供了帮助，不妨点一个⭐star，万分感谢！
