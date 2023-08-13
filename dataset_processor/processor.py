@@ -151,16 +151,28 @@ class Processor:
         data.size = data.img.size
         return data
     
+    def convert_to_white_background(data:Data)->Data:
+        if data.img.mode=="RGBA":
+            new_img = Image.new("RGB",data.size,(255,255,255))
+            new_img.paste(data.img,(0,0),mask=data.img)
+            data.img = new_img
+            data.img.convert("RGB")
+            data.ext=".jpg"
+            data.conduct+="_cwb"
+        return data
+
     def smart_crop(data:Data,size:list)->Data:
         """
         size: [x,y]
         """
         size = tuple(size)
         smart_crop = SmartCrop()
-        top_crop = smart_crop.crop(data.img,size[0],size[1])['top_crop']
+        data = Processor.convert_to_white_background(data)
+        top_crop = smart_crop.crop(data.img,100,100)['top_crop']
         box = (top_crop['x'],top_crop['y'],top_crop['width'],top_crop['height'])
-        data.img = data.img.crop(box).resize(size)
+        data.img = data.img.crop(box)
         data.size = data.img.size
+        data.conduct += "_sc"
         return data
 
 
