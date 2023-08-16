@@ -169,8 +169,22 @@ class Processor:
         smart_crop = SmartCrop()
         data = Processor.convert_to_white_background(data)
         top_crop = smart_crop.crop(data.img,100,100)['top_crop']
-        box = (top_crop['x'],top_crop['y'],top_crop['width'],top_crop['height'])
-        data.img = data.img.crop(box)
+        #下面这大堆东西都是限位用的
+        long_side = max(top_crop['width'],top_crop['height'])
+        long_side_limit = min(data.size[0],data.size[1])
+        if long_side > long_side_limit:
+            long_side = long_side_limit
+        limit = (data.size[0]-long_side,data.size[1]-long_side)
+        if top_crop['x'] <= limit[0]:
+            x=top_crop['x'] 
+        else:
+            x= limit[0]
+        if top_crop['y'] <= limit[1]:
+            y=top_crop['y'] 
+        else:
+            y= limit[1]
+        box = (x,y,x+long_side,y+long_side)
+        data.img = data.img.crop(box).resize(size)
         data.size = data.img.size
         data.conduct += "_sc"
         return data

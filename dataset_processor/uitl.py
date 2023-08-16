@@ -95,6 +95,10 @@ class MainOption:
         else:
             self.force_tag_all = False
 
+        if args.get('custom_name'):
+            self.custom_name = args.get('custom_name')
+        else:
+            self.custom_name = None
 
 class DatasetProcessor:
     """
@@ -183,9 +187,9 @@ class DatasetProcessor:
         for filter in filter_list:
             fun = getattr(Filter, filter.get('filter'))
             if filter.get('arg'):
-                if fun(data, filter.get('arg')): return True
+                return fun(data, filter.get('arg'))
             else:
-                if fun(data): return True
+                return fun(data)
         return False
 
     # 处理器管理

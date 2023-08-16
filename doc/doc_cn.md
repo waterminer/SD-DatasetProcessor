@@ -63,14 +63,15 @@ conduct:
 
 在yaml中加入option来自定义以下选项
 
-|名称|说明|
-|--|--|
-|save_source_name|保存原文件名称|
-|save_conduct_id|保存处理id|
-|save_sub|保存子处理|
-|clean_tag|清洗标签(将"_"换成空格，给括号加上"\")，默认开启|
-|tag_no_paired_data|自动对没有标签的图片进行打标，需要配置`tagger`，默认开启|
-|force_tag_all|强制对所有图片进行打标，需要配置`tagger`|
+|名称|说明|参数|
+|--|--|--|
+|save_source_name|保存原文件名称|布尔值|
+|custom_name|自定义名称|字符串|
+|save_conduct_id|保存处理id|布尔值|
+|save_sub|保存子处理|布尔值|
+|clean_tag|清洗标签(将"_"换成空格，给括号加上"\")，默认开启|布尔值|
+|tag_no_paired_data|自动对没有标签的图片进行打标，需要配置`tagger`，默认开启|布尔值|
+|force_tag_all|强制对所有图片进行打标，需要配置`tagger`|布尔值|
 
 以下是示例：
 

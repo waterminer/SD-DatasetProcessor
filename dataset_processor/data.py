@@ -41,8 +41,10 @@ class Data:
         # 默认命名方式：id_conduct_repeat.ext 比如"000001_r_0.jpg"
         save_name = str(self.id).zfill(6) + self.conduct
         if option:
-            if option.save_source_name or option.save_conduct_id:
+            if option.save_source_name or option.save_conduct_id or option.custom_name:
                 save_name = str(self.id).zfill(6)
+                if option.custom_name:
+                    save_name = save_name.join('_' + option.custom_name)
                 if option.save_source_name:
                     save_name = save_name.join('_' + self.name)
                 if option.save_conduct_id:
