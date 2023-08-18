@@ -166,7 +166,7 @@ class DatasetProcessor:
                 count += 1
             if ext in TEXT_EXT:
                 token_list.append(file_name)
-            no_paired_data_list = self.pair_token(token_list, data_list)
+        no_paired_data_list = self.pair_token(token_list, data_list)
         token_list.clear()
         print(
             "一共读取" + str(count) + "张图片,其中有" +
@@ -230,29 +230,33 @@ class DatasetProcessor:
                 exit(1)
         return data
 
-    def conduct_manager(self, conducts: list[dict], data_list: list[Data]) -> list[Data]:
+    def conduct_manager(self, conducts: list[dict], data_list: list[Data],output_dir:str) -> list[tuple[Data,str]]:
         """
         处理行为管理函数，虽然可以接受data_list，但是存在文件名碰撞隐患
         推荐只传入一个data对象
+        返回一个元素为(data,save_path)的列表，save_path是data的对应保存地址
         """
         return_list = []
-        output_dir = self.output_dir
         for conduct in conducts:
+            save_path = output_dir #初始化保存地址
             if conduct.get('sub_conduct'):
                 sub_data_list = [copy.copy(data) for data in data_list]
                 for data in sub_data_list:
                     data.conduct += "_sub["
-                sub_data_list = self.conduct_manager(conduct.get('sub_conduct'), sub_data_list)
+                #请原谅我写成这么样的一坨，我也想不到有什么好办法
+                if self.option.save_sub:
+                    sub_output = os.path.join(output_dir, "sub")
+                    if not (os.path.exists(sub_output)):
+                        os.mkdir(sub_output)
+                sub_data_list = self.conduct_manager(conduct.get('sub_conduct'), sub_data_list,sub_output)
                 if sub_data_list:
-                    for data in sub_data_list:
+                    data_list = []
+                    for data,_ in sub_data_list:
                         data.conduct += "]"
-                    data_list = copy.deepcopy(sub_data_list)
+                        data_list.append(copy.deepcopy(data))
                     if self.option.save_sub:
-                        sub_output = os.path.join(output_dir, "sub")
-                        if not (os.path.exists(sub_output)):
-                            os.mkdir(sub_output)
-                        for sub_data in sub_data_list:
-                            sub_data.save(sub_output, self.option)
+                        for sub_data,sub_save_path in sub_data_list:
+                            sub_data.save(sub_save_path, self.option)
             for data in data_list:
                 filters = conduct.get('filters')
                 if filters:
@@ -261,10 +265,19 @@ class DatasetProcessor:
                     repeat = conduct.get('repeat')
                 else:
                     repeat = 1
+                if conduct.get('custom_sub_folder'):
+                    if conduct.get('custom_sub_folder') == "sub":
+                        print("Invalid folder name Error:custom_sub_folder can not be \"sub\"!")
+                        raise(InvalidFolderNameRrror)
+                    save_path=os.path.join(output_dir,conduct.get('custom_sub_file'))
+                    if not (os.path.exists(save_path)):
+                        os.mkdir(save_path)
                 for j in range(0, repeat):
                     data.repeat = j
                     try:
-                        return_list.append(self.processor_manager(conduct.get('processor'), copy.deepcopy(data)))
+                        return_list.append(
+                            (self.processor_manager(conduct.get('processor'), copy.deepcopy(data)),save_path)
+                            )
                     except ProcessorError:
                         break
         return return_list
@@ -277,10 +290,10 @@ class DatasetProcessor:
         for i in tqdm(range(0, len(self.data_list))):
             data = self.data_list.pop()
             data.id = i
-            data_list = self.conduct_manager(self.conduct, [data])
+            data_list = self.conduct_manager(self.conduct, [data], self.output_dir)
             if data_list:
-                for data in data_list:
-                    data.save(self.output_dir, self.option)
+                for data,save_path in data_list:
+                    data.save(save_path, self.option)
 
 
 class NoneTaggerError(RuntimeError):
@@ -291,3 +304,7 @@ class NoneTaggerError(RuntimeError):
 class NoneUpscaleError(RuntimeError):
     def __init__(self, name):
         self.name = name
+
+class InvalidFolderNameRrror(RuntimeError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)

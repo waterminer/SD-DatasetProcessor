@@ -59,6 +59,14 @@ conduct:
 在默认情况下，文件保存名称为:`id_处理id_重复次数.格式`  
 比如:`000001_f_0.jpg`
 
+## 启动项
+
+`--config`:可以自行决定配置文件的路径，默认为根目录下的`conf.yaml`
+
+`--input`:指定输入文件，如果指定则会覆盖配置文件中的设置
+
+`--output`:指定输出文件，如果指定则会覆盖配置文件中的设置
+
 ## 可选项
 
 在yaml中加入option来自定义以下选项
@@ -126,6 +134,8 @@ option:
 
 ## 子处理说明
 
+子处理是一种强大且灵活的功能，可以减少对配置文件的重复编写。
+
 在配置文件`conduct`项中可以添加`sub_conduct`子处理，在运行中会将子处理的结果作为输入返回主处理
 
 子处理的编写方式与主处理的编写方式相同。
@@ -152,10 +162,42 @@ conduct:
         - method: random_crop
           arg: 1024
     processor: 
+      - method: none #不对子处理进行操作
+  #子处理会覆盖原本的输入，即便是换成下一个处理组，子处理依旧生效，这点请务必注意
+  - processor: 
       - method: flip #将所有子处理进行翻转
 ```
 
 当然，如果你想要的话，你可以在子处理中嵌套子处理，这是完全合法的
+
+## 保存为子文件夹说明
+
+在`conduct`中添加`custom_sub_folder`就能为这个处理组设定保存的子文件夹
+
+如果是在`sub_conduct`子处理中添加这个参数，需要启用`save_sub`才会有效果
+
+示例如下:
+
+``` yaml
+conduct:
+- sub_conduct:
+  - filters:
+    - filter: img_size
+      arg: [-1,1024]
+    processor:
+    - method: upscale_image
+    custom_sub_folder: upscaled #保存的地址为 output*/sub/upscaled
+  - filters:
+    - filter: img_size
+      arg: [1024,-1]
+    processor:
+    - method: none
+  processor:
+  - method: none
+- processor:
+  - method: flip
+  custom_sub_folder: flip #保存的地址为 output*/flip
+```
 
 ## 自动打标设置说明
 

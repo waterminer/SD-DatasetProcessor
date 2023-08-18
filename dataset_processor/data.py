@@ -44,11 +44,11 @@ class Data:
             if option.save_source_name or option.save_conduct_id or option.custom_name:
                 save_name = str(self.id).zfill(6)
                 if option.custom_name:
-                    save_name = save_name.join('_' + option.custom_name)
+                    save_name += "_"+option.custom_name
                 if option.save_source_name:
-                    save_name = save_name.join('_' + self.name)
+                    save_name += '_'+self.name
                 if option.save_conduct_id:
-                    save_name = save_name.join(self.conduct)
+                    save_name += '_'+self.conduct
         self.img.save(os.path.join(output_dir, save_name + self.ext))
         # print(save_name)
         with open(os.path.join(output_dir, save_name + ".txt"), mode="w") as f:
